@@ -44,7 +44,7 @@ static const char* skip_whitespace(const char* input) {
 static const char* read_int(const char* input, int* value) {
   if (!is_digit(*input)) return NULL;
   int temp = 0;
-  while ('0' <= *input && *input <= '9') {
+  while (is_digit(*input)) {
     temp = 10 * temp + (*input - '0');
     input++;
   }
