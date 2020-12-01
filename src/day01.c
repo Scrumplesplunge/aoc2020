@@ -53,27 +53,53 @@ static const char* read_int(const char* input, int* value) {
 }
 
 char buffer[1024];
+enum { max_numbers = 200 };
+int numbers[max_numbers];
+int n;
+char set[2021];
 
-int fuel(int mass) {
-  int x = mass / 3 - 2;
-  return x > 0 ? x + fuel(x) : 0;
-}
-
-int main() {
+static void read_input() {
   int len = read(stdin, buffer, sizeof(buffer) - 1);
   if (len == -1) die("read");
-  int part_1 = 0, part_2 = 0;
   const char* i = buffer;
   const char* const end = buffer + len;
   while (i != end) {
     i = skip_whitespace(i);
     if (i == end) break;
-    int x;
-    i = read_int(skip_whitespace(i), &x);
+    if (n == max_numbers) die("too many");
+    i = read_int(skip_whitespace(i), &numbers[n]);
     if (i == NULL) die("bad input");
-    part_1 += x / 3 - 2;
-    part_2 += fuel(x);
+    if (numbers[n] > 2020) die("too large");
+    set[numbers[n]] = 1;
+    n++;
   }
-  print_int(part_1);
-  print_int(part_2);
+}
+
+static int part1() {
+  for (int i = 0; i < n; i++) {
+    if (set[2020 - numbers[i]]) {
+      return numbers[i] * (2020 - numbers[i]);
+    }
+  }
+  die("not found");
+}
+
+static int part2() {
+  for (int i = 0; i < n; i++) {
+    int remaining = 2020 - numbers[i];
+    for (int j = i + 1; j < n; j++) {
+      if (numbers[j] > remaining) continue;
+      const int num_k = remaining - numbers[j];
+      if (set[num_k]) {
+        return numbers[i] * numbers[j] * num_k;
+      }
+    }
+  }
+  die("not found");
+}
+
+int main() {
+  read_input();
+  print_int(part1());
+  print_int(part2());
 }

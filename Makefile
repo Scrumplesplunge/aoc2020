@@ -12,7 +12,7 @@ OPT_CFLAGS = -Os -ffunction-sections -fdata-sections \
 OPT_LDFLAGS = --gc-sections -s
 
 .PHONY: default all opt debug clean
-.PRECIOUS: obj/%.o
+.PRECIOUS: obj/%.o obj/opt/%.o obj/debug/%.o
 default: debug
 
 SOURCES = $(wildcard src/day[0-2][0-9].c)
