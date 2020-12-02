@@ -13,7 +13,7 @@ OPT_CFLAGS = -Os -ffunction-sections -fdata-sections \
 OPT_LDFLAGS = --gc-sections -s
 
 .PHONY: default all opt debug clean
-.PRECIOUS: obj/%.o obj/opt/%.o obj/debug/%.o
+.PRECIOUS: build/%.o build/opt/%.o build/debug/%.o
 default: debug
 
 SOURCES = $(wildcard src/day[0-2][0-9].c)
@@ -25,21 +25,21 @@ opt: ${OPT_SOLVERS}
 debug: ${DEBUG_SOLVERS}
 
 clean:
-	rm -rf bin obj
+	rm -rf bin build
 
-obj:
-	mkdir obj
+build:
+	mkdir build
 
-obj/opt obj/debug: | obj
+build/opt build/debug: | build
 	mkdir $@
 
-obj/%.o: src/%.s | obj
+build/%.o: src/%.s | build
 	${AS} $^ -o $@
 
-obj/opt/%.o: src/%.c | obj/opt
+build/opt/%.o: src/%.c | build/opt
 	${CC} ${CFLAGS} ${OPT_CFLAGS} -c $^ -o $@
 
-obj/debug/%.o: src/%.c | obj/debug
+build/debug/%.o: src/%.c | build/debug
 	${CC} ${CFLAGS} ${DEBUG_CFLAGS} -c $^ -o $@
 
 bin:
@@ -51,8 +51,8 @@ bin/opt bin/debug: | bin
 # The order of the dependencies here is very important: the linker script must
 # come first (to be the sole argument to -T), and elf.o must come next (to be
 # the first thing in the output).
-bin/opt/%: src/link.ld obj/elf.o obj/start.o obj/opt/%.o | bin/opt
+bin/opt/%: src/link.ld build/elf.o build/start.o build/opt/%.o | bin/opt
 	${LD} ${LDFLAGS} ${OPT_LDFLAGS} -T $^ -o $@
 
-bin/debug/%: obj/start.o obj/debug/%.o | bin/debug
+bin/debug/%: build/start.o build/debug/%.o | bin/debug
 	${LD} ${LDFLAGS} ${DEBUG_LDFLAGS} $^ -o $@
