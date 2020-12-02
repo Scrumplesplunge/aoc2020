@@ -10,6 +10,7 @@ static unsigned int strlen(const char* c_string) {
   return i - c_string;
 }
 
+// Exit the program with a given error message.
 __attribute__((noreturn)) static void die(const char* message) {
   write(stderr, message, strlen(message));
   write(stderr, "\n", 1);
@@ -20,6 +21,21 @@ static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';
 }
 
+// Print an integer in decimal, followed by a newline.
+static void print_int(int x) {
+  char buffer[16];
+  buffer[15] = '\n';
+  int i = 15;
+  do {
+    --i;
+    buffer[i] = '0' + (x % 10);
+    x /= 10;
+  } while (x);
+  write(stdout, buffer + i, 16 - i);
+}
+
+// Read a decimal integer from the string at input into value, returning the
+// address of the first byte after the integer.
 static char* read_int(char* input, int* value) {
   if (!is_digit(*input)) return NULL;
   int temp = 0;
@@ -42,18 +58,6 @@ struct entry {
 enum { max_entries = 1000 };
 struct entry entries[max_entries];
 int num_entries;
-
-static void print_int(int x) {
-  char buffer[16];
-  buffer[15] = '\n';
-  int i = 15;
-  do {
-    --i;
-    buffer[i] = '0' + (x % 10);
-    x /= 10;
-  } while (x);
-  write(stdout, buffer + i, 16 - i);
-}
 
 static int part1(void) {
   int total = 0;
@@ -81,11 +85,13 @@ static int part2(void) {
 }
 
 int main() {
+  // Parse the input into `entries`.
   int len = read(stdin, buffer, sizeof(buffer) - 1);
   if (len < 0) die("read");
   char* i = buffer;
   char* const end = buffer + len;
   while (i < end) {
+    if (num_entries == max_entries) die("too many");
     int min, max;
     i = read_int(i, &min);
     if (i == NULL || min > 255) die("lower bound");
