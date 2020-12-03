@@ -17,10 +17,6 @@ __attribute__((noreturn)) static void die(const char* message) {
   exit(1);
 }
 
-//static _Bool is_digit(char c) {
-//  return '0' <= c && c <= '9';
-//}
-
 // Print an integer in decimal, followed by a newline.
 static void print_int(unsigned int x) {
   char buffer[16];
@@ -33,19 +29,6 @@ static void print_int(unsigned int x) {
   } while (x);
   write(stdout, buffer + i, 16 - i);
 }
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-//static char* read_int(char* input, int* value) {
-//  if (!is_digit(*input)) return NULL;
-//  int temp = 0;
-//  while (is_digit(*input)) {
-//    temp = 10 * temp + (*input - '0');
-//    input++;
-//  }
-//  *value = temp;
-//  return input;
-//}
 
 char buffer[65536];
 
