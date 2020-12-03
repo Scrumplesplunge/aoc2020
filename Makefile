@@ -1,7 +1,8 @@
 CC = gcc -m32
 AS = as --32
 LD = ld -m elf_i386
-CFLAGS = -Wall -Wextra -pedantic -nostdlib -nostartfiles -static -fno-pic
+CFLAGS = -Wall -Wextra -pedantic -nostdlib -nostartfiles -static -fno-pic \
+				 -include src/start.h
 LDFLAGS =
 
 DEBUG_CFLAGS = -g3
@@ -36,11 +37,11 @@ build/opt build/debug: | build
 build/%.o: src/%.s | build
 	${AS} $^ -o $@
 
-build/opt/%.o: src/%.c | build/opt
-	${CC} ${CFLAGS} ${OPT_CFLAGS} -c $^ -o $@
+build/opt/%.o: src/%.c src/start.h | build/opt
+	${CC} ${CFLAGS} ${OPT_CFLAGS} -c $< -o $@
 
-build/debug/%.o: src/%.c | build/debug
-	${CC} ${CFLAGS} ${DEBUG_CFLAGS} -c $^ -o $@
+build/debug/%.o: src/%.c src/start.h | build/debug
+	${CC} ${CFLAGS} ${DEBUG_CFLAGS} -c $< -o $@
 
 bin:
 	mkdir bin

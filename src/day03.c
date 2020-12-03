@@ -1,19 +1,7 @@
-enum { stdin, stdout, stderr };
-#define NULL ((void*)0)
-extern int write(int fd, const void* buffer, int size);
-extern int read(int fd, void* buffer, int size);
-extern void exit(int code);
-
-static unsigned int strlen(const char* c_string) {
-  const char* i = c_string;
-  while (*i) i++;
-  return i - c_string;
-}
-
 // Exit the program with a given error message.
 __attribute__((noreturn)) static void die(const char* message) {
-  write(stderr, message, strlen(message));
-  write(stderr, "\n", 1);
+  write(STDERR_FILENO, message, strlen(message));
+  write(STDERR_FILENO, "\n", 1);
   exit(1);
 }
 
@@ -36,7 +24,7 @@ static void print_int64(unsigned long long x) {
   while (buffer[i] == 0) i++;
   const int start = i < 22 ? i : 22;
   for (int j = start; j < 23; j++) buffer[j] += '0';
-  write(stdout, buffer + start, 24 - start);
+  write(STDOUT_FILENO, buffer + start, 24 - start);
 }
 
 char buffer[65536];
@@ -70,7 +58,7 @@ static unsigned long long part2(int width, int height) {
 
 int main() {
   // Read the input.
-  int len = read(stdin, buffer, sizeof(buffer) - 1);
+  int len = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
   if (len < 0) die("read");
   int width = 0;
   while (buffer[width] != '\n') width++;

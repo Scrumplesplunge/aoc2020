@@ -1,19 +1,7 @@
-enum { stdin, stdout, stderr };
-#define NULL ((void*)0)
-extern int write(int fd, const void* buffer, int size);
-extern int read(int fd, void* buffer, int size);
-extern void exit(int code);
-
-static unsigned int strlen(const char* c_string) {
-  const char* i = c_string;
-  while (*i) i++;
-  return i - c_string;
-}
-
 // Exit the program with a given error message.
 __attribute__((noreturn)) static void die(const char* message) {
-  write(stderr, message, strlen(message));
-  write(stderr, "\n", 1);
+  write(STDERR_FILENO, message, strlen(message));
+  write(STDERR_FILENO, "\n", 1);
   exit(1);
 }
 
@@ -31,7 +19,7 @@ static void print_int(int x) {
     buffer[i] = '0' + (x % 10);
     x /= 10;
   } while (x);
-  write(stdout, buffer + i, 16 - i);
+  write(STDOUT_FILENO, buffer + i, 16 - i);
 }
 
 // Read a decimal integer from the string at input into value, returning the
@@ -86,7 +74,7 @@ static int part2(void) {
 
 int main() {
   // Parse the input into `entries`.
-  int len = read(stdin, buffer, sizeof(buffer) - 1);
+  int len = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
   if (len < 0) die("read");
   char* i = buffer;
   char* const end = buffer + len;

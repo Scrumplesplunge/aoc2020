@@ -1,19 +1,7 @@
-enum { stdin, stdout, stderr };
-#define NULL ((void*)0)
-extern int write(int fd, const void* buffer, int size);
-extern int read(int fd, void* buffer, int size);
-extern void exit(int code);
-
-static unsigned int strlen(const char* c_string) {
-  const char* i = c_string;
-  while (*i) i++;
-  return i - c_string;
-}
-
 // Exit the program with an error message.
 __attribute__((noreturn)) static void die(const char* message) {
-  write(stderr, message, strlen(message));
-  write(stderr, "\n", 1);
+  write(STDERR_FILENO, message, strlen(message));
+  write(STDERR_FILENO, "\n", 1);
   exit(1);
 }
 
@@ -27,7 +15,7 @@ static void print_int(int x) {
     buffer[i] = '0' + (x % 10);
     x /= 10;
   } while (x);
-  write(stdout, buffer + i, 16 - i);
+  write(STDOUT_FILENO, buffer + i, 16 - i);
 }
 
 static _Bool is_digit(char c) {
@@ -68,7 +56,7 @@ char set[2021];
 
 // Parse the input into `numbers` and `set`.
 static void read_input() {
-  int len = read(stdin, buffer, sizeof(buffer) - 1);
+  int len = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
   if (len == -1) die("read");
   const char* i = buffer;
   const char* const end = buffer + len;
