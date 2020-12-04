@@ -182,7 +182,8 @@ static char* check_passport(
 
 int main() {
   int len = read(STDIN_FILENO, buffer, sizeof(buffer));
-  if (len < 0) die("read");
+  if (len <= 0) die("read");
+  if (buffer[len - 1] != '\n') die("newline");
   char* i = buffer;
   char* const end = buffer + len;
   struct passport_validity num_valid = {0};
