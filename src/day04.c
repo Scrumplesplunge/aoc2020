@@ -87,47 +87,7 @@ static char* read_entry(char* i, struct entry* out) {
   return i + 1;
 }
 
-struct passport {
-  struct entry* entries;
-  int num_entries;
-};
-
-enum { max_entries = 10000 };
-struct entry entries[max_entries];
-int num_entries;
-
-static char* read_passport(char* i, char* const end, struct passport* out) {
-  out->entries = entries + num_entries;
-  while (i < end) {
-    if (num_entries == max_entries) die("too many entries");
-    i = read_entry(i, &entries[num_entries]);
-    if (!entries[num_entries].key) break;
-    num_entries++;
-  }
-  out->num_entries = entries + num_entries - out->entries;
-  return i;
-}
-
-enum { max_passports = 1000 };
-struct passport passports[max_passports];
-int num_passports;
-
 static char buffer[32768];
-
-static int part1(void) {
-  int num_valid = 0;
-  for (int i = 0; i < num_passports; i++) {
-    struct passport* p = &passports[i];
-    int count = 0;
-    for (int j = 0; j < p->num_entries; j++) {
-      if (p->entries[j].key != cid) count++;
-    }
-    // If a passport has 7 entries and we assume that there are no duplicate
-    // keys, it must have all the required fields.
-    if (count == 7) num_valid++;
-  }
-  return num_valid;
-}
 
 static _Bool check_year(const char* year, int min, int max) {
   if (strlen(year) != 4) return 0;
@@ -197,19 +157,24 @@ static _Bool check_entry(struct entry* e) {
   }
 }
 
-static int part2(void) {
-  int num_valid = 0;
-  for (int i = 0; i < num_passports; i++) {
-    struct passport* p = &passports[i];
-    int count = 0;
-    for (int j = 0; j < p->num_entries; j++) {
-      if (check_entry(&p->entries[j])) count++;
-    }
-    // If a passport has 7 entries and we assume that there are no duplicate
-    // keys, it must have all the required fields.
-    if (count == 7) num_valid++;
+struct passport_validity {
+  int part1;
+  int part2;
+};
+
+static char* check_passport(
+    char* i, char* const end, struct passport_validity* out) {
+  int part1 = 0, part2 = 0;
+  while (i < end) {
+    struct entry entry;
+    i = read_entry(i, &entry);
+    if (!entry.key) break;
+    part1 += entry.key != cid;
+    part2 += check_entry(&entry);
   }
-  return num_valid;
+  out->part1 += part1 == 7;
+  out->part2 += part2 == 7;
+  return i;
 }
 
 int main() {
@@ -218,11 +183,10 @@ int main() {
   if (len < 0) die("read");
   char* i = buffer;
   char* const end = buffer + len;
+  struct passport_validity num_valid = {0};
   while (i < end) {
-    if (num_passports == max_passports) die("too many passports");
-    i = read_passport(i, end, &passports[num_passports]);
-    num_passports++;
+    i = check_passport(i, end, &num_valid);
   }
-  print_int(part1());
-  print_int(part2());
+  print_int(num_valid.part1);
+  print_int(num_valid.part2);
 }
