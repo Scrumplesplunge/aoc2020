@@ -10,7 +10,8 @@ DEBUG_LDFLAGS =
 
 OPT_CFLAGS = -Os -ffunction-sections -fdata-sections \
 						 -fno-unwind-tables -fno-asynchronous-unwind-tables \
-						 -fomit-frame-pointer -mpreferred-stack-boundary=2
+						 -fomit-frame-pointer -fno-stack-protector \
+						 -mpreferred-stack-boundary=2
 OPT_LDFLAGS = --gc-sections -s
 
 .PHONY: default all opt debug clean

@@ -38,8 +38,19 @@ static __attribute__((noreturn)) void exit(int code) {
   asm volatile("int $0x80" : : "a"(1), "b"(code));
 }
 
+// Utility functions from the standard library.
+
 static unsigned int strlen(const char* c_string) {
   const char* i = c_string;
   while (*i) i++;
   return i - c_string;
+}
+
+static void* memcpy(void* restrict dest, const void* restrict src,
+                    unsigned int n) {
+  char* o = dest;
+  char* const end = o + n;
+  const char* i = src;
+  while (o != end) *o++ = *i++;
+  return dest;
 }
