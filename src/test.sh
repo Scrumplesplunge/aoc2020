@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mode=${1?}
+mode=${1:-debug}
 
 make -q "$mode" || make "$mode"
 
