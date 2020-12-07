@@ -1,5 +1,3 @@
-// 30112 too low
-
 // Exit the program with a given error message.
 __attribute__((noreturn)) static void die(const char* message) {
   write(STDERR_FILENO, message, strlen(message));
