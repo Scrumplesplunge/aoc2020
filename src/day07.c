@@ -58,21 +58,38 @@ static char* read_int(char* input, int* value) {
   return input;
 }
 
-enum { max_styles = 1024 };
-const char* styles[max_styles];
+struct style {
+  const char* name;
+  struct style* next;
+};
+
+enum { max_styles = 1024, style_map_size = 256 };
+struct style styles[max_styles];
 int num_styles;
-char* styles_end;
+struct style* style_map[style_map_size];
+
+static unsigned hash_style(const char* name) {
+  unsigned key = 0x01234567;
+  while (*name) {
+    key = (key * 97) ^ (unsigned char)*name;
+    name++;
+  }
+  return key;
+}
 
 // Return the unique ID for a given style name.
-static int intern_style(const char* style) {
-  for (int i = 0; i < num_styles; i++) {
-    if (strcmp(styles[i], style) == 0) return i;
+static int intern_style(const char* name) {
+  const int index = hash_style(name) % style_map_size;
+  for (struct style* i = style_map[index]; i != NULL; i = i->next) {
+    if (strcmp(i->name, name) == 0) return i - styles;
   }
   if (num_styles == max_styles) die("styles");
   // Style is new: allocate new id.
   const int id = num_styles;
   num_styles++;
-  styles[id] = style;
+  styles[id].name = name;
+  styles[id].next = style_map[index];
+  style_map[index] = &styles[id];
   return id;
 }
 
@@ -91,8 +108,8 @@ static char* read_style(char* i, int* style) {
 char buffer[65536];
 
 struct node {
-  int style;
-  int count;
+  short style;
+  short count;
   struct node* next;
 };
 
