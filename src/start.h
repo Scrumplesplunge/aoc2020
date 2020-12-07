@@ -47,11 +47,19 @@ static unsigned int strlen(const char* c_string) {
 }
 
 static int strcmp(const char* l, const char* r) {
-  while (*l) {
-    if (*l - *r) return *l - *r;
-    ++l, ++r;
-  }
-  return *l - *r;
+  unsigned char lc, rc;
+  do {
+    lc = *l++, rc = *r++;
+    if (lc == '\0') return lc - rc;
+  } while (lc == rc);
+  return lc - rc;
+}
+
+static void* memset(void* dest, int c, unsigned int n) {
+  unsigned char* o = dest;
+  unsigned char* const end = o + n;
+  while (o != end) *o++ = c;
+  return dest;
 }
 
 static void* memcpy(void* restrict dest, const void* restrict src,
