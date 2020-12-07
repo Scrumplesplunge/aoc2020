@@ -46,6 +46,14 @@ static unsigned int strlen(const char* c_string) {
   return i - c_string;
 }
 
+static int strcmp(const char* l, const char* r) {
+  while (*l) {
+    if (*l - *r) return *l - *r;
+    ++l, ++r;
+  }
+  return *l - *r;
+}
+
 static void* memcpy(void* restrict dest, const void* restrict src,
                     unsigned int n) {
   char* o = dest;
