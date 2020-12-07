@@ -65,7 +65,7 @@ struct style* style_map[style_map_size];
 static unsigned hash_style(const char* name) {
   unsigned key = 0x01234567;
   while (*name) {
-    key = (key * 97) ^ (unsigned char)*name;
+    key = (key << 2 | key >> 30) ^ (unsigned char)*name;
     name++;
   }
   return key;
