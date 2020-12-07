@@ -22,10 +22,6 @@ static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';
 }
 
-static _Bool is_lower(char c) {
-  return 'a' <= c && c <= 'z';
-}
-
 // Consume a prefix from a string (returning the position after the prefix), or
 // return NULL on failure.
 static char* try_consume(char* input, const char* prefix) {
@@ -94,9 +90,9 @@ static int intern_style(const char* name) {
 // Parse a style name.
 static char* read_style(char* i, int* style) {
   const char* temp = i;
-  while (is_lower(*i)) i++;
+  while (*i != ' ') i++;
   i++;
-  while (is_lower(*i)) i++;
+  while (*i != ' ') i++;
   *i = 0;
   i++;
   *style = intern_style(temp);
