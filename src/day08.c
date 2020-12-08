@@ -137,7 +137,10 @@ static int part1() {
   return result;
 }
 
-static _Bool reaches_end(int address) {
+// Compute whether or not each instruction terminates. The results for each
+// instruction are memoized in `terminates`, so this is amortized O(1) when
+// called for each instruction.
+static _Bool terminates(int address) {
   if (address >= code_size) return 1;
   struct operation* op = &code[address];
   if (op->seen) return op->terminates;
@@ -145,10 +148,10 @@ static _Bool reaches_end(int address) {
   switch (op->opcode) {
     case nop:
     case acc:
-      op->terminates = reaches_end(address + 1);
+      op->terminates = terminates(address + 1);
       break;
     case jmp:
-      op->terminates = reaches_end(address + op->argument);
+      op->terminates = terminates(address + op->argument);
       break;
   }
   return op->terminates;
@@ -161,7 +164,7 @@ static int part2() {
     if (!op->reachable) continue;
     switch (op->opcode) {
       case nop:
-        if (reaches_end(i + op->argument)) {
+        if (terminates(i + op->argument)) {
           op->opcode = jmp;
           int result;
           if (!run(&result)) die("bug");
@@ -169,7 +172,7 @@ static int part2() {
         }
         break;
       case jmp:
-        if (reaches_end(i + 1)) {
+        if (terminates(i + 1)) {
           op->opcode = nop;
           int result;
           if (!run(&result)) die("bug");
