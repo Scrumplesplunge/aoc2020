@@ -49,9 +49,14 @@ enum opcode {
 };
 
 struct operation {
+  // True if this instruction can be reached from the start of the program.
+  unsigned reachable : 1;
+  // True if we have already examined this node for termination.
   unsigned seen : 1;
+  // True if we can reach the end from this instruction.
+  unsigned terminates : 1;
   unsigned opcode : 2;
-  int argument : 29;
+  int argument : 27;
 };
 
 enum { max_code_size = 1024 };
@@ -99,16 +104,16 @@ static void read_input() {
 }
 
 static _Bool run(int* result) {
-  for (int i = 0; i < code_size; i++) code[i].seen = 0;
+  for (int i = 0; i < code_size; i++) code[i].reachable = 0;
   int i = 0;
   int accumulator = 0;
   while (i < code_size) {
     struct operation* op = &code[i];
-    if (op->seen) {
+    if (op->reachable) {
       *result = accumulator;
       return 0;
     }
-    op->seen = 1;
+    op->reachable = 1;
     switch (op->opcode) {
       case nop:
         i++;
@@ -126,33 +131,60 @@ static _Bool run(int* result) {
   return 1;
 }
 
-int main() {
-  read_input();
-  int part1;
-  if (run(&part1)) die("part1 terminates");
-  print_int(part1);
+static int part1() {
+  int result;
+  if (run(&result)) die("part1 terminates");
+  return result;
+}
+
+static _Bool reaches_end(int address) {
+  if (address >= code_size) return 1;
+  struct operation* op = &code[address];
+  if (op->seen) return op->terminates;
+  op->seen = 1;
+  switch (op->opcode) {
+    case nop:
+    case acc:
+      op->terminates = reaches_end(address + 1);
+      break;
+    case jmp:
+      op->terminates = reaches_end(address + op->argument);
+      break;
+  }
+  return op->terminates;
+}
+
+static int part2() {
   for (int i = 0; i < code_size; i++) {
-    int result;
-    switch (code[i].opcode) {
+    struct operation* op = &code[i];
+    // It's only worth adjusting instructions which are initially reachable.
+    if (!op->reachable) continue;
+    switch (op->opcode) {
       case nop:
-        code[i].opcode = jmp;
-        if (run(&result)) {
-          print_int(result);
-          return 0;
+        if (reaches_end(i + op->argument)) {
+          op->opcode = jmp;
+          int result;
+          if (!run(&result)) die("bug");
+          return result;
         }
-        code[i].opcode = nop;
         break;
       case jmp:
-        code[i].opcode = nop;
-        if (run(&result)) {
-          print_int(result);
-          return 0;
+        if (reaches_end(i + 1)) {
+          op->opcode = nop;
+          int result;
+          if (!run(&result)) die("bug");
+          return result;
         }
-        code[i].opcode = jmp;
         break;
-      default:
+      case acc:
         break;
     }
   }
   die("no change works");
+}
+
+int main() {
+  read_input();
+  print_int(part1());
+  print_int(part2());
 }
