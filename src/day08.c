@@ -59,15 +59,15 @@ struct operation {
   int argument : 27;
 };
 
-enum { max_code_size = 1024 };
+enum { max_code_size = 1 << 20 };
 struct operation code[max_code_size];
 int code_size;
 
 #define C(x) ((unsigned)(unsigned char)(x))
 #define KEY3(a, b, c) (C(a) | C(b) << 8 | C(c) << 16)
 
+static char buffer[8 << 20];
 static void read_input() {
-  char buffer[8192];
   int len = read(STDIN_FILENO, buffer, sizeof(buffer));
   if (len <= 0) die("read");
   if (buffer[len - 1] != '\n') die("newline");
@@ -137,24 +137,26 @@ static int part1() {
   return result;
 }
 
-// Compute whether or not each instruction terminates. The results for each
-// instruction are memoized in `terminates`, so this is amortized O(1) when
-// called for each instruction.
-static _Bool terminates(int address) {
-  if (address >= code_size) return 1;
-  struct operation* op = &code[address];
-  if (op->seen) return op->terminates;
-  op->seen = 1;
-  switch (op->opcode) {
-    case nop:
-    case acc:
-      op->terminates = terminates(address + 1);
-      break;
-    case jmp:
-      op->terminates = terminates(address + op->argument);
-      break;
+int stack[max_code_size];
+static _Bool terminates(int root) {
+  if (code[root].seen) return code[root].terminates;
+  stack[0] = root;
+  int size = 1;
+  while (size) {
+    const int address = stack[--size];
+    struct operation* op = &code[address];
+    const int offset = op->opcode == jmp ? op->argument : 1;
+    op->seen = 1;
+    if (address + offset >= code_size) {
+      op->terminates = 1;
+    } else if (op[offset].seen) {
+      op->terminates = op[offset].terminates;
+    } else {
+      stack[size++] = address;
+      stack[size++] = address + offset;
+    }
   }
-  return op->terminates;
+  return code[root].terminates;
 }
 
 static int part2() {
