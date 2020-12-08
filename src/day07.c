@@ -35,7 +35,7 @@ static char* try_consume(char* input, const char* prefix) {
 // Like try_consume, but die on match failure.
 static char* consume(char* input, const char* prefix) {
   char* after = try_consume(input, prefix);
-  if (input == NULL) die("syntax");
+  if (after == NULL) die("syntax");
   return after;
 }
 
