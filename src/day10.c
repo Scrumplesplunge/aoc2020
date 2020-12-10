@@ -44,45 +44,12 @@ static const char* read_int(const char* input, unsigned short* value) {
   return input;
 }
 
-enum { max_numbers = 8192 };
+enum { max_numbers = 256 };
 unsigned short numbers[max_numbers];
 int num_numbers;
 
-static void sift_down(unsigned short* values, int num_values, int i) {
-  const int x = values[i];
-  while (1) {
-    const int l = 2 * i + 1, r = l + 1;
-    if (num_values <= l) break;
-    const int max_child = r < num_values && values[l] < values[r] ? r : l;
-    if (x >= values[max_child]) break;
-    values[i] = values[max_child];
-    i = max_child;
-  }
-  values[i] = x;
-}
-
-static void heapify(unsigned short* values, int num_values) {
-  // Build a heap.
-  for (int i = num_values - 1; i >= 0; i--) sift_down(values, num_values, i);
-}
-
-static int heap_pop(unsigned short* values, int num_values) {
-  const int x = values[0];
-  values[0] = values[num_values - 1];
-  sift_down(values, num_values - 1, 0);
-  return x;
-}
-
-static void sort(unsigned short* values, int num_values) {
-  heapify(values, num_values);
-  // Repeatedly pop.
-  for (int i = num_values - 1; i >= 0; i--) {
-    values[i] = heap_pop(values, i + 1);
-  }
-}
-
-char buffer[65536];
 static void read_input() {
+  char buffer[512];
   const int len = read(STDIN_FILENO, buffer, sizeof(buffer));
   if (len <= 0) die("read");
   if (buffer[len - 1] != '\n') die("newline");
@@ -94,7 +61,15 @@ static void read_input() {
     if (*i != '\n') die("line");
     i++;
   }
-  sort(numbers, num_numbers);
+  for (int i = 0; i < num_numbers; i++) {
+    int min = i;
+    for (int j = i; j < num_numbers; j++) {
+      if (numbers[j] < numbers[min]) min = j;
+    }
+    unsigned short temp = numbers[i];
+    numbers[i] = numbers[min];
+    numbers[min] = temp;
+  }
 }
 
 static int part1() {
