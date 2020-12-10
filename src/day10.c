@@ -44,7 +44,7 @@ static const char* read_int(const char* input, unsigned short* value) {
   return input;
 }
 
-enum { max_numbers = 128 };
+enum { max_numbers = 8192 };
 unsigned short numbers[max_numbers];
 int num_numbers;
 
@@ -81,13 +81,13 @@ static void sort(unsigned short* values, int num_values) {
   }
 }
 
+char buffer[65536];
 static void read_input() {
-  char temp[512];
-  const int len = read(STDIN_FILENO, temp, sizeof(temp));
+  const int len = read(STDIN_FILENO, buffer, sizeof(buffer));
   if (len <= 0) die("read");
-  if (temp[len - 1] != '\n') die("newline");
-  const char* i = temp;
-  const char* const end = temp + len;
+  if (buffer[len - 1] != '\n') die("newline");
+  const char* i = buffer;
+  const char* const end = buffer + len;
   while (i != end) {
     if (num_numbers == max_numbers) die("too many");
     i = read_int(i, &numbers[num_numbers++]);
