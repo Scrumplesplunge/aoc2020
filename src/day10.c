@@ -110,19 +110,19 @@ static int part1() {
   return counts[1] * counts[3];
 }
 
-unsigned long long arrangements[max_numbers];
+unsigned long long arrangements_buffer[3 * max_numbers + 10];
 static unsigned long long part2() {
-  // arrangements[i] is the number of arrangements of adapters starting at the
-  // power outlet and ending with device i.
+  // arrangements[i] is the number of arrangements of adapters resulting in
+  // a joltage level of i. It is offset by 2 into the buffer so that the loop
+  // doesn't have to have special cases for the first few elements.
+  unsigned long long* arrangements = arrangements_buffer + 2;
   arrangements[0] = 1;
-  for (int i = 1; i < num_numbers; i++) {
-    arrangements[i] = numbers[i] <= 3;
-    for (int j = i - 1; j >= 0; j--) {
-      if (numbers[i] - numbers[j] > 3) break;
-      arrangements[i] += arrangements[j];
-    }
+  for (int i = 0; i < num_numbers; i++) {
+    const int x = numbers[i];
+    arrangements[x] =
+        arrangements[x - 1] + arrangements[x - 2] + arrangements[x - 3];
   }
-  return arrangements[num_numbers - 1];
+  return arrangements[numbers[num_numbers - 1]];
 }
 
 int main() {
