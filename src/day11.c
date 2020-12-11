@@ -68,8 +68,15 @@ static void read_input() {
   grid_height = height + 2;
 }
 
+// Find the number of people seated once the arrangement stabilises, given
+// a comfort threshold (the number of adjacent people which are needed for
+// someone to vacate their seat) and a function which counts adjacent people.
+// The `prepare` parameter is invoked before each stage to allow for stateful
+// adjacency functions.
 struct grid buffers[2];
-static int part1() {
+static int find_seated(int comfort_threshold,
+                       void (*prepare)(const struct grid*),
+                       int (*adjacent)(const struct grid*, int, int)) {
   memcpy(&buffers[0], &input, sizeof(input));
   _Bool changed = 1;
   // Iterate until the state does not change.
@@ -78,20 +85,15 @@ static int part1() {
     const _Bool parity = round % 2;
     const struct grid* source = &buffers[parity];
     struct grid* const destination = &buffers[1 - parity];
+    prepare(source);
     for (int y = 1; y < grid_height - 1; y++) {
       for (int x = 1; x < grid_width - 1; x++) {
-        int adjacent = 0;
-        for (int dy = -1; dy <= 1; dy++) {
-          for (int dx = -1; dx <= 1; dx++) {
-            if (dx == 0 && dy == 0) continue;
-            if (source->cells[y + dy][x + dx] == person) adjacent++;
-          }
-        }
+        const int a = adjacent(source, x, y);
         const char cell = source->cells[y][x];
-        if (cell == seat && adjacent == 0) {
+        if (cell == seat && a == 0) {
           changed = 1;
           destination->cells[y][x] = person;
-        } else if (cell == person && adjacent >= 4) {
+        } else if (cell == person && a >= comfort_threshold) {
           changed = 1;
           destination->cells[y][x] = seat;
         } else {
@@ -109,78 +111,65 @@ static int part1() {
   return total;
 }
 
+static void noop() {}
+
+static int part1_adjacent(const struct grid* source, int x, int y) {
+  int adjacent = 0;
+  for (int dy = -1; dy <= 1; dy++) {
+    for (int dx = -1; dx <= 1; dx++) {
+      if (dx == 0 && dy == 0) continue;
+      if (source->cells[y + dy][x + dx] == person) adjacent++;
+    }
+  }
+  return adjacent;
+}
+
 // occupied[y][x][i] is true if someone at (x, y) can see an occupied seat in
 // direction i. If there is an unoccupied seat in the way, or if there is no
 // seat in that direction, it will be false.
 _Bool occupied[max_size][max_size][8];
 
-static int part2() {
-  memcpy(&buffers[0], &input, sizeof(input));
-  _Bool changed = 1;
-  // Iterate until the state does not change.
-  for (int round = 0; changed; round++) {
-    changed = 0;
-    const _Bool parity = round % 2;
-    const struct grid* const source = &buffers[parity];
-    struct grid* const destination = &buffers[1 - parity];
-    // Update the occupied array.
-    const int directions[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0},
-                                  {1, 0},   {-1, 1}, {0, 1},  {1, 1}};
-    for (int i = 0; i < 4; i++) {
-      const int dx = directions[i][0], dy = directions[i][1];
-      for (int y = 1; y < grid_height - 1; y++) {
-        for (int x = 1; x < grid_width - 1; x++) {
-          int x2 = x + dx, y2 = y + dy;
-          const char obstruction = source->cells[y2][x2];
-          const char behind = occupied[y2][x2][i];
-          occupied[y][x][i] =
-              obstruction != floor ? obstruction == person : behind;
-        }
-      }
-    }
-    for (int i = 4; i < 8; i++) {
-      const int dx = directions[i][0], dy = directions[i][1];
-      for (int y = grid_height - 2; y >= 1; y--) {
-        for (int x = grid_width - 2; x >= 1; x--) {
-          int x2 = x + dx, y2 = y + dy;
-          const char obstruction = source->cells[y2][x2];
-          const char behind = occupied[y2][x2][i];
-          occupied[y][x][i] =
-              obstruction != floor ? obstruction == person : behind;
-        }
-      }
-    }
-    // Compute the adjacency for the round.
+static void part2_prepare(const struct grid* source) {
+  // Update the occupied array.
+  const int directions[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0},
+                                {1, 0},   {-1, 1}, {0, 1},  {1, 1}};
+  for (int i = 0; i < 4; i++) {
+    const int dx = directions[i][0], dy = directions[i][1];
     for (int y = 1; y < grid_height - 1; y++) {
       for (int x = 1; x < grid_width - 1; x++) {
-        int adjacent = 0;
-        for (int i = 0; i < 8; i++) {
-          adjacent += occupied[y][x][i];
-        }
-        const char cell = source->cells[y][x];
-        if (cell == seat && adjacent == 0) {
-          changed = 1;
-          destination->cells[y][x] = person;
-        } else if (cell == person && adjacent >= 5) {
-          changed = 1;
-          destination->cells[y][x] = seat;
-        } else {
-          destination->cells[y][x] = source->cells[y][x];
-        }
+        int x2 = x + dx, y2 = y + dy;
+        const char obstruction = source->cells[y2][x2];
+        const char behind = occupied[y2][x2][i];
+        occupied[y][x][i] =
+            obstruction != floor ? obstruction == person : behind;
       }
     }
   }
-  int total = 0;
-  for (int y = 0; y < grid_height; y++) {
-    for (int x = 0; x < grid_width; x++) {
-      if (buffers[0].cells[y][x] == person) total++;
+  for (int i = 4; i < 8; i++) {
+    const int dx = directions[i][0], dy = directions[i][1];
+    for (int y = grid_height - 2; y >= 1; y--) {
+      for (int x = grid_width - 2; x >= 1; x--) {
+        int x2 = x + dx, y2 = y + dy;
+        const char obstruction = source->cells[y2][x2];
+        const char behind = occupied[y2][x2][i];
+        occupied[y][x][i] =
+            obstruction != floor ? obstruction == person : behind;
+      }
     }
   }
-  return total;
+}
+
+static int part2_adjacent(const struct grid* source, int x, int y) {
+  (void)source;
+  int adjacent = 0;
+  for (int i = 0; i < 8; i++) {
+    adjacent += occupied[y][x][i];
+  }
+  return adjacent;
 }
 
 int main() {
   read_input();
-  print_int(part1());
-  print_int(part2());
+  print_int(find_seated(4, noop, part1_adjacent));
+  print_int(find_seated(5, part2_prepare, part2_adjacent));
 }
