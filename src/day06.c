@@ -23,7 +23,7 @@ static void print_int(int x) {
 }
 
 // Returns the number of bits set in an unsigned int.
-unsigned bits_set(unsigned x) {
+static unsigned bits_set(unsigned x) {
   int total = 0;
   for (int i = 0; i < 32; i++) total += (x >> i) & 1;
   return total;

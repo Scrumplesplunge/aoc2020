@@ -45,8 +45,8 @@ static const char* read_int(const char* input, unsigned short* value) {
 }
 
 enum { max_numbers = 256 };
-unsigned short numbers[max_numbers];
-int num_numbers;
+static unsigned short numbers[max_numbers];
+static int num_numbers;
 
 static void read_input() {
   char buffer[512];
@@ -85,7 +85,7 @@ static int part1() {
   return counts[1] * counts[3];
 }
 
-unsigned long long arrangements_buffer[3 * max_numbers + 10];
+static unsigned long long arrangements_buffer[3 * max_numbers + 10];
 static unsigned long long part2() {
   // arrangements[i] is the number of arrangements of adapters resulting in
   // a joltage level of i. It is offset by 2 into the buffer so that the loop

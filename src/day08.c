@@ -60,8 +60,8 @@ struct operation {
 };
 
 enum { max_code_size = 1 << 20 };
-struct operation code[max_code_size];
-int code_size;
+static struct operation code[max_code_size];
+static int code_size;
 
 #define C(x) ((unsigned)(unsigned char)(x))
 #define KEY3(a, b, c) (C(a) | C(b) << 8 | C(c) << 16)
@@ -137,7 +137,7 @@ static int part1() {
   return result;
 }
 
-int stack[max_code_size];
+static int stack[max_code_size];
 static _Bool terminates(int root) {
   if (code[root].seen) return code[root].terminates;
   stack[0] = root;

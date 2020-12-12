@@ -58,9 +58,9 @@ struct style {
 };
 
 enum { max_styles = 1024, style_map_size = 256 };
-struct style styles[max_styles];
-int num_styles;
-struct style* style_map[style_map_size];
+static struct style styles[max_styles];
+static int num_styles;
+static struct style* style_map[style_map_size];
 
 static unsigned hash_style(const char* name) {
   unsigned key = 0x01234567;
@@ -99,7 +99,7 @@ static char* read_style(char* i, int* style) {
   return i;
 }
 
-char buffer[65536];
+static char buffer[65536];
 
 struct node {
   short style;
@@ -108,13 +108,13 @@ struct node {
 };
 
 enum { max_nodes = 4096 };
-struct node nodes[max_nodes];
-int num_nodes;
-struct node* parents[max_styles];
-struct node* children[max_styles];
+static struct node nodes[max_nodes];
+static int num_nodes;
+static struct node* parents[max_styles];
+static struct node* children[max_styles];
 
 // Part 1: Visit all bags that can be transitive parents of a certain bag.
-_Bool visited[max_styles];
+static _Bool visited[max_styles];
 static void visit(int root) {
   int stack[max_nodes] = {root};
   int stack_size = 1;
@@ -133,7 +133,7 @@ struct count {
   unsigned counted : 1;
   unsigned value : 31;
 };
-struct count counts[max_styles];
+static struct count counts[max_styles];
 static unsigned count_children(int root) {
   if (counts[root].counted) return counts[root].value;
   unsigned total = 0;

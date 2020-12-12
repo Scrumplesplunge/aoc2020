@@ -31,10 +31,6 @@ static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';
 }
 
-// static _Bool is_lower(char c) {
-//   return 'a' <= c && c <= 'z';
-// }
-
 // Read a decimal integer from the string at input into value, returning the
 // address of the first byte after the integer.
 static const char* read_int(const char* input, unsigned long long* value) {
@@ -50,9 +46,9 @@ static const char* read_int(const char* input, unsigned long long* value) {
 
 enum { max_numbers = 1024 };
 static char buffer[16384];
-unsigned char prelude_size = 25;
-unsigned long long numbers[max_numbers];
-int num_numbers;
+static unsigned char prelude_size = 25;
+static unsigned long long numbers[max_numbers];
+static int num_numbers;
 
 static void read_input() {
   const int len = read(STDIN_FILENO, buffer, sizeof(buffer));

@@ -24,14 +24,14 @@ static void print_int(int x) {
 enum { max_size = 128 };
 
 // Grid dimensions. All instances of `grid` will use this size.
-int grid_width, grid_height;
+static int grid_width, grid_height;
 
 enum cell { floor, seat, person };
 struct grid {
   char cells[max_size][max_size];
 };
 
-struct grid input;
+static struct grid input;
 
 static void read_input() {
   char temp[65536];
@@ -73,7 +73,7 @@ static void read_input() {
 // Find the number of people seated once the arrangement stabilises, given
 // a comfort threshold (the number of adjacent people which are needed for
 // someone to vacate their seat) and a function which counts adjacent people.
-struct grid buffers[2];
+static struct grid buffers[2];
 static int find_seated(int comfort_threshold,
                        int (*adjacent)(const struct grid*, int, int)) {
   memcpy(&buffers[0], &input, sizeof(input));
@@ -125,7 +125,7 @@ static int part1_adjacent(const struct grid* source, int x, int y) {
 // {0, 0}. This doesn't need special handling since we have a border of floor
 // around the modified input grid.
 struct position { unsigned char x, y; };
-struct position visible[max_size][max_size][8];
+static struct position visible[max_size][max_size][8];
 
 static void part2_init() {
   // Update the visibility arrays.

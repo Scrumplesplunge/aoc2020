@@ -27,7 +27,7 @@ static void print_int64(unsigned long long x) {
   write(STDOUT_FILENO, buffer + start, 24 - start);
 }
 
-char buffer[65536];
+static char buffer[65536];
 
 static unsigned int solve(int width, int height, int dx, int dy) {
   unsigned int count = 0;

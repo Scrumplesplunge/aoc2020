@@ -35,7 +35,7 @@ static char* read_int(char* input, int* value) {
   return input;
 }
 
-char buffer[65536];
+static char buffer[65536];
 
 struct entry {
   unsigned char min, max;
@@ -44,8 +44,8 @@ struct entry {
 };
 
 enum { max_entries = 1000 };
-struct entry entries[max_entries];
-int num_entries;
+static struct entry entries[max_entries];
+static int num_entries;
 
 static int part1(void) {
   int total = 0;

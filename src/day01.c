@@ -45,14 +45,14 @@ static const char* read_int(const char* input, int* value) {
   return input;
 }
 
-char buffer[1024];
+static char buffer[1024];
 enum { max_numbers = 200 };
 // The list of input numbers.
-int numbers[max_numbers];
-int n;
+static int numbers[max_numbers];
+static int n;
 // A set indexed by values from the numbers array, which is 1 iff the value is
 // in the list.
-char set[2021];
+static char set[2021];
 
 // Parse the input into `numbers` and `set`.
 static void read_input() {

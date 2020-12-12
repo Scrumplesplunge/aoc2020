@@ -20,7 +20,7 @@ static void print_int(int x) {
 
 // Bitmask for seats. seats[row] is a full row with bit i set if column i is
 // populated by some boarding pass.
-unsigned char seats[128] = {0};
+static unsigned char seats[128] = {0};
 
 int main() {
   int max_id = 0;
