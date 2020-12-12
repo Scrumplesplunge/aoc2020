@@ -115,70 +115,50 @@ static struct vec rotate_right(unsigned char amount, struct vec v) {
   die("bug");
 }
 
-static int part1() {
-  struct vec position = {0, 0}, direction = {1, 0};
+// Apply the instruction set with the given position and direction vectors. The
+// NESW instructions will affect the instruction_target, which should alias
+// either position or direction.
+static int travel(struct vec* position, struct vec* direction,
+                  struct vec* instruction_target) {
   for (int i = 0; i < num_instructions; i++) {
     switch (instructions[i].action) {
       case north:
-        position.y -= instructions[i].value;
+        instruction_target->y -= instructions[i].value;
         break;
       case south:
-        position.y += instructions[i].value;
+        instruction_target->y += instructions[i].value;
         break;
       case east:
-        position.x += instructions[i].value;
+        instruction_target->x += instructions[i].value;
         break;
       case west:
-        position.x -= instructions[i].value;
+        instruction_target->x -= instructions[i].value;
         break;
       case forward:
-        position.x += direction.x * instructions[i].value;
-        position.y += direction.y * instructions[i].value;
+        position->x += direction->x * instructions[i].value;
+        position->y += direction->y * instructions[i].value;
         break;
       case left:
-        direction = rotate_left(instructions[i].value, direction);
+        *direction = rotate_left(instructions[i].value, *direction);
         break;
       case right:
-        direction = rotate_right(instructions[i].value, direction);
+        *direction = rotate_right(instructions[i].value, *direction);
         break;
     }
   }
-  const int x = position.x < 0 ? -position.x : position.x;
-  const int y = position.y < 0 ? -position.y : position.y;
+  const int x = position->x < 0 ? -position->x : position->x;
+  const int y = position->y < 0 ? -position->y : position->y;
   return x + y;
+}
+
+static int part1() {
+  struct vec position = {0, 0}, direction = {1, 0};
+  return travel(&position, &direction, &position);
 }
 
 static int part2() {
   struct vec position = {0, 0}, waypoint = {10, -1};
-  for (int i = 0; i < num_instructions; i++) {
-    switch (instructions[i].action) {
-      case north:
-        waypoint.y -= instructions[i].value;
-        break;
-      case south:
-        waypoint.y += instructions[i].value;
-        break;
-      case east:
-        waypoint.x += instructions[i].value;
-        break;
-      case west:
-        waypoint.x -= instructions[i].value;
-        break;
-      case forward:
-        position.x += waypoint.x * instructions[i].value;
-        position.y += waypoint.y * instructions[i].value;
-        break;
-      case left:
-        waypoint = rotate_left(instructions[i].value, waypoint);
-        break;
-      case right:
-        waypoint = rotate_right(instructions[i].value, waypoint);
-        break;
-    }
-  }
-  const int x = position.x < 0 ? -position.x : position.x;
-  const int y = position.y < 0 ? -position.y : position.y;
-  return x + y;
+  return travel(&position, &waypoint, &waypoint);
 }
 
 int main() {
