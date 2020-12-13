@@ -22,7 +22,7 @@ function fetch {
 function copy {
   local user="${1?}"
   local directory="${2?}"
-  rsync -rv "/tmp/$user-aoc2020/$directory/puzzles/" "puzzles/"
+  rsync --filter='- *, + *.input, + *.output' -rv "/tmp/$user-aoc2020/$directory/puzzles/" "puzzles/"
 }
 
 for info in "${users[@]}"; do
@@ -30,3 +30,10 @@ for info in "${users[@]}"; do
   echo "git@github.com:$user/$repository/$directory/puzzles"
   fetch "$user" "$repository" && copy "$user" "$directory"
 done
+
+# Clean up the solutions.
+rename puzzle rob puzzles/*/*
+rename dammit-joe rob puzzles/*/*
+rm puzzles/*/*.{test,exponential}
+# Remove trailing whitespace and ensure that the file ends with a newline.
+sed -i 's/\s*$//;a\' puzzles/*/*
