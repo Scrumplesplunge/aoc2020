@@ -35,7 +35,7 @@ for day in day{01..25}; do
   if ! [[ -d "puzzles/$day" ]]; then
     continue
   fi
-  find "puzzles/$day" -name '*.output' | while read output; do
+  find "puzzles/$day" -name '*.output' | sort | while read output; do
     puzzle="$(basename -s '.output' "$output")"
     solve "$day" "$puzzle"
   done
