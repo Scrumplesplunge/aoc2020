@@ -148,23 +148,6 @@ static struct slot* get_slot(unsigned long long address) {
   return *slot;
 }
 
-static unsigned long long msb(unsigned long long value) {
-  for (int i = 0; i < 6; i++) value |= value >> (1 << i);
-  return value - (value >> 1);
-}
-
-static void set_many(
-    unsigned long long base_address, unsigned long long floating_mask,
-    unsigned long long value) {
-  if (floating_mask) {
-    const unsigned long long m = msb(floating_mask);
-    set_many(base_address, floating_mask ^ m, value);
-    set_many(base_address | m, floating_mask ^ m, value);
-  } else {
-    get_slot(base_address)->value = value;
-  }
-}
-
 static unsigned long long part2() {
   unsigned long long set_mask = 0, clear_mask = 0;
   for (int i = 0; i < num_instructions; i++) {
@@ -178,7 +161,13 @@ static unsigned long long part2() {
             0xFFFFFFFFFULL & ~set_mask & ~clear_mask;
         const unsigned long long base_address =
             (instructions[i].a | set_mask) & ~floating_mask;
-        set_many(base_address, floating_mask, instructions[i].b);
+        // Iterate over all the possible combinations of floating bits.
+        unsigned long long floating_values = 0;
+        do {
+          get_slot(base_address | floating_values)->value = instructions[i].b;
+          floating_values =
+              (floating_values + 1 + ~floating_mask) & floating_mask;
+        } while (floating_values);
         break;
       }
     }
