@@ -134,9 +134,17 @@ static struct slot slots[max_slots];
 int num_slots;
 static struct slot* slot_map[slot_map_size];
 
+static unsigned bucket(unsigned long long address) {
+  unsigned bucket = 0;
+  for (unsigned long long i = -1; i; i /= slot_map_size) {
+    bucket ^= address % slot_map_size;
+    address /= slot_map_size;
+  }
+  return bucket;
+}
+
 static struct slot* get_slot(unsigned long long address) {
-  const unsigned bucket = address % slot_map_size;
-  struct slot** slot = &slot_map[bucket];
+  struct slot** slot = &slot_map[bucket(address)];
   while (*slot && (*slot)->address != address) {
     slot = &(*slot)->next;
   }
