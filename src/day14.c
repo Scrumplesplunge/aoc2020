@@ -102,8 +102,8 @@ static void read_input() {
   }
 }
 
-unsigned long long memory[memory_size];
-unsigned long long part1() {
+static unsigned long long memory[memory_size];
+static unsigned long long part1() {
   unsigned long long set_mask = 0, clear_mask = 0;
   for (int i = 0; i < num_instructions; i++) {
     switch (instructions[i].operation) {
@@ -124,7 +124,74 @@ unsigned long long part1() {
   return total;
 }
 
+struct slot {
+  unsigned long long address;
+  unsigned long long value;
+  struct slot* next;
+};
+enum { max_slots = 1 << 20, slot_map_size = 1 << 16 };
+static struct slot slots[max_slots];
+int num_slots;
+static struct slot* slot_map[slot_map_size];
+
+static struct slot* get_slot(unsigned long long address) {
+  const unsigned bucket = address % slot_map_size;
+  struct slot** slot = &slot_map[bucket];
+  while (*slot && (*slot)->address != address) {
+    slot = &(*slot)->next;
+  }
+  if (*slot) return *slot;
+  if (num_slots == max_slots) die("too many");
+  *slot = &slots[num_slots++];
+  (*slot)->address = address;
+  (*slot)->value = 0;
+  return *slot;
+}
+
+static unsigned long long msb(unsigned long long value) {
+  for (int i = 0; i < 6; i++) value |= value >> (1 << i);
+  return value - (value >> 1);
+}
+
+static void set_many(
+    unsigned long long base_address, unsigned long long floating_mask,
+    unsigned long long value) {
+  if (floating_mask) {
+    const unsigned long long m = msb(floating_mask);
+    set_many(base_address, floating_mask ^ m, value);
+    set_many(base_address | m, floating_mask ^ m, value);
+  } else {
+    get_slot(base_address)->value = value;
+  }
+}
+
+static unsigned long long part2() {
+  unsigned long long set_mask = 0, clear_mask = 0;
+  for (int i = 0; i < num_instructions; i++) {
+    switch (instructions[i].operation) {
+      case mask:
+        set_mask = instructions[i].a;
+        clear_mask = instructions[i].b;
+        break;
+      case assign: {
+        const unsigned long long floating_mask =
+            0xFFFFFFFFFULL & ~set_mask & ~clear_mask;
+        const unsigned long long base_address =
+            (instructions[i].a | set_mask) & ~floating_mask;
+        set_many(base_address, floating_mask, instructions[i].b);
+        break;
+      }
+    }
+  }
+  unsigned long long total = 0;
+  for (int i = 0; i < num_slots; i++) {
+    total += slots[i].value;
+  }
+  return total;
+}
+
 int main() {
   read_input();
   print_int64(part1());
+  print_int64(part2());
 }
