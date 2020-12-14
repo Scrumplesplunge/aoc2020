@@ -149,22 +149,19 @@ static struct slot* get_slot(unsigned long long address) {
 }
 
 static unsigned long long part2() {
-  unsigned long long set_mask = 0, clear_mask = 0;
+  unsigned long long set_mask = 0, floating_mask = 0;
   for (int i = 0; i < num_instructions; i++) {
     switch (instructions[i].operation) {
       case mask:
         set_mask = instructions[i].a;
-        clear_mask = instructions[i].b;
+        floating_mask = 0xFFFFFFFFFULL & ~set_mask & ~instructions[i].b;
         break;
       case assign: {
-        const unsigned long long floating_mask =
-            0xFFFFFFFFFULL & ~set_mask & ~clear_mask;
-        const unsigned long long base_address =
-            (instructions[i].a | set_mask) & ~floating_mask;
+        const unsigned long long base_address = instructions[i].a | set_mask;
         // Iterate over all the possible combinations of floating bits.
         unsigned long long floating_values = 0;
         do {
-          get_slot(base_address | floating_values)->value = instructions[i].b;
+          get_slot(base_address ^ floating_values)->value = instructions[i].b;
           floating_values =
               (floating_values + 1 + ~floating_mask) & floating_mask;
         } while (floating_values);
