@@ -47,6 +47,7 @@ int main() {
   const char* i = buffer;
   unsigned turn = 0;
   unsigned last_number;
+  memset(spoken, -1, sizeof(spoken));
   while (1) {
     ++turn;
     i = read_int(i, &last_number);
@@ -57,7 +58,7 @@ int main() {
   }
   while (turn < 2020) {
     const unsigned answer =
-        spoken[last_number] ? turn - spoken[last_number] : 0;
+        spoken[last_number] != -1 ? turn - spoken[last_number] : 0;
     spoken[last_number] = turn;
     turn++;
     last_number = answer;
@@ -65,7 +66,7 @@ int main() {
   print_int(last_number);
   while (turn < 30000000) {
     const unsigned answer =
-        spoken[last_number] ? turn - spoken[last_number] : 0;
+        spoken[last_number] != -1 ? turn - spoken[last_number] : 0;
     spoken[last_number] = turn;
     turn++;
     last_number = answer;
