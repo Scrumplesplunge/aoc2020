@@ -27,9 +27,9 @@ static _Bool is_digit(char c) {
 
 // Read a decimal integer from the string at input into value, returning the
 // address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned short* value) {
+static const char* read_int(const char* input, unsigned* value) {
   if (!is_digit(*input)) die("int");
-  unsigned short temp = 0;
+  unsigned temp = 0;
   while (is_digit(*input)) {
     temp = 10 * temp + (*input - '0');
     input++;
@@ -38,15 +38,15 @@ static const char* read_int(const char* input, unsigned short* value) {
   return input;
 }
 
-unsigned short spoken[2048];
+unsigned spoken[30000001];
 int main() {
   char buffer[128];
   const int length = read(STDIN_FILENO, buffer, sizeof(buffer));
   if (length <= 0) die("read");
   if (buffer[length - 1] != '\n') die("newline");
   const char* i = buffer;
-  unsigned short turn = 0;
-  unsigned short last_number;
+  unsigned turn = 0;
+  unsigned last_number;
   while (1) {
     ++turn;
     i = read_int(i, &last_number);
@@ -56,7 +56,15 @@ int main() {
     i++;
   }
   while (turn < 2020) {
-    const unsigned short answer =
+    const unsigned answer =
+        spoken[last_number] ? turn - spoken[last_number] : 0;
+    spoken[last_number] = turn;
+    turn++;
+    last_number = answer;
+  }
+  print_int(last_number);
+  while (turn < 30000000) {
+    const unsigned answer =
         spoken[last_number] ? turn - spoken[last_number] : 0;
     spoken[last_number] = turn;
     turn++;
