@@ -55,6 +55,16 @@ static int strcmp(const char* l, const char* r) {
   return lc - rc;
 }
 
+static int strncmp(const char* l, const char* r, unsigned n) {
+  unsigned char lc = 0, rc = 0;
+  unsigned i = 0;
+  for (unsigned i = 0; i < n && lc == rc; i++) {
+    lc = *l++, rc = *r++;
+    if (lc == '\0') return lc - rc;
+  }
+  return lc - rc;
+}
+
 static void* memset(void* dest, int c, unsigned int n) {
   unsigned char* o = dest;
   unsigned char* const end = o + n;
