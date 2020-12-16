@@ -121,7 +121,7 @@ _Bool valid_pairs[max_fields][max_fields];
 // fields, and a set of taken indices where taken[i] is true if result already
 // has a field assigned to i, returns the field index of the least ambiguous
 // field.
-int least_ambiguous(signed char* result, _Bool* taken) {
+int least_ambiguous(const signed char* result, _Bool* taken) {
   // Check for one field that is unambiguous.
   int ambiguity = num_fields + 1;
   int field = -1;
