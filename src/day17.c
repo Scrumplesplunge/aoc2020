@@ -104,8 +104,8 @@ static int part2() {
         for (int dy = -1; dy <= 1; dy++) {
           for (int dx = -1; dx <= 1; dx++) {
             if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
-            for (int w = 1; w < size_w - 1; w++) {
-              for (int z = 1; z < size_z - 1; z++) {
+            for (int w = size_w / 2; w < size_w - 1; w++) {
+              for (int z = size_z / 2; z < size_z - 1; z++) {
                 for (int y = 1; y < size_y - 1; y++) {
                   for (int x = 1; x < size_x - 1; x++) {
                     output[w][z][y][x] += input[w + dw][z + dz][y + dy][x + dx];
@@ -119,8 +119,8 @@ static int part2() {
     }
     // Having accumulated the population counts, use them to establish the new
     // cell values.
-    for (int w = 1; w < size_w - 1; w++) {
-      for (int z = 1; z < size_z - 1; z++) {
+    for (int w = size_w / 2; w < size_w - 1; w++) {
+      for (int z = size_z / 2; z < size_z - 1; z++) {
         for (int y = 1; y < size_y - 1; y++) {
           for (int x = 1; x < size_x - 1; x++) {
             const _Bool populated = input[w][z][y][x];
@@ -130,6 +130,10 @@ static int part2() {
             } else {
               output[w][z][y][x] = neighbours == 3;
             }
+            // Exploit the symmetry.
+            output[size_w - w][z][y][x] = output[w][z][y][x];
+            output[size_w - w][size_z - z][y][x] = output[w][z][y][x];
+            output[w][size_z - z][y][x] = output[w][z][y][x];
           }
         }
       }
