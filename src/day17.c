@@ -23,7 +23,7 @@ static void print_int(int x) {
 
 enum { size_x = 32, size_y = 32, size_z = 16, size_w = 16 };
 _Bool part1_cells[2][size_z][size_y][size_x];
-_Bool part2_cells[2][size_w][size_z][size_y][size_x];
+unsigned char part2_cells[2][size_w][size_z][size_y][size_x];
 
 static void read_input() {
   char buffer[256];
@@ -91,23 +91,40 @@ static int part1() {
 static int part2() {
   for (int i = 0; i < 6; i++) {
     const _Bool parity = i % 2;
-    _Bool (*input)[size_z][size_y][size_x] = part2_cells[parity];
-    _Bool (*output)[size_z][size_y][size_x] = part2_cells[1 - parity];
+    unsigned char (*input)[size_z][size_y][size_x] = part2_cells[parity];
+    unsigned char (*output)[size_z][size_y][size_x] = part2_cells[1 - parity];
+    // Accumulate the neighbours for each cell. Instead of doing it one cell at
+    // a time, we do every cell at once, accumulating the partial totals in the
+    // output cells before replacing those neighbour counts with cell values
+    // later. This has much better cache locality as the innermost loops only
+    // access two locations that always move forwards linearly.
+    memset(output, 0, sizeof(part2_cells[1 - parity]));
+    for (int dw = -1; dw <= 1; dw++) {
+      for (int dz = -1; dz <= 1; dz++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          for (int dx = -1; dx <= 1; dx++) {
+            if (dx == 0 && dy == 0 && dz == 0 && dw == 0) continue;
+            for (int w = 1; w < size_w - 1; w++) {
+              for (int z = 1; z < size_z - 1; z++) {
+                for (int y = 1; y < size_y - 1; y++) {
+                  for (int x = 1; x < size_x - 1; x++) {
+                    output[w][z][y][x] += input[w + dw][z + dz][y + dy][x + dx];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // Having accumulated the population counts, use them to establish the new
+    // cell values.
     for (int w = 1; w < size_w - 1; w++) {
       for (int z = 1; z < size_z - 1; z++) {
         for (int y = 1; y < size_y - 1; y++) {
           for (int x = 1; x < size_x - 1; x++) {
             const _Bool populated = input[w][z][y][x];
-            int neighbours = -populated;
-            for (int dw = -1; dw <= 1; dw++) {
-              for (int dz = -1; dz <= 1; dz++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                  for (int dx = -1; dx <= 1; dx++) {
-                    if (input[w + dw][z + dz][y + dy][x + dx]) neighbours++;
-                  }
-                }
-              }
-            }
+            const unsigned char neighbours = output[w][z][y][x];
             if (populated) {
               output[w][z][y][x] = neighbours == 2 || neighbours == 3;
             } else {
@@ -118,6 +135,7 @@ static int part2() {
       }
     }
   }
+  // Count the populated cells.
   int populated = 0;
   for (int w = 0; w < size_w; w++) {
     for (int z = 0; z < size_z; z++) {
