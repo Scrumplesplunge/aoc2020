@@ -60,7 +60,6 @@ const char* messages[max_messages];
 int num_messages;
 
 static void read_input() {
-  char buffer[32768];
   const int length = read(STDIN_FILENO, buffer, sizeof(buffer));
   if (length <= 0) die("read");
   if (buffer[length - 1] != '\n') die("newline");
@@ -185,7 +184,7 @@ static const char* match_end(void* data, const char* input) {
   return *input == '\0' ? input : NULL;
 }
 
-static int part1() {
+static int count_matches() {
   int count = 0;
   for (int i = 0; i < num_messages; i++) {
     const char* result = match(
@@ -197,5 +196,20 @@ static int part1() {
 
 int main() {
   read_input();
-  print_int(part1());
+  print_int(count_matches());
+  rules[8] = (struct rule){
+    .num_sequences = 2,
+    .sequences = {
+      {.num_parts = 1, .parts = {42}},
+      {.num_parts = 2, .parts = {42, 8}},
+    },
+  };
+  rules[11] = (struct rule){
+    .num_sequences = 2,
+    .sequences = {
+      {.num_parts = 2, .parts = {42, 31}},
+      {.num_parts = 3, .parts = {42, 11, 31}},
+    },
+  };
+  print_int(count_matches());
 }
