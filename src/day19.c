@@ -114,39 +114,82 @@ static void read_input() {
   }
 }
 
-static const char* match(int rule, const char* input);
+struct match_resume {
+  void* data;
+  const char* (*func)(void*, const char*);
+};
 
-static const char* match_sequence(struct sequence* s, const char* input) {
-  for (int i = 0; i < s->num_parts; i++) {
-    const char* result = match(s->parts[i], input);
-    if (!result) return NULL;
-    input = result;
+// Given a rule number, an input string, and a match_resume, invoke the
+// resumption function for every valid match of rule with some prefix of the
+// input. If the resumption function returns non-NULL for any invocation, that
+// value is immediately returned from match.
+static const char* match(
+    int rule, const char* input, struct match_resume resume);
+
+struct match_sequence_state {
+  unsigned char* parts;
+  int num_parts;
+  struct match_resume resume;
+};
+
+// Match a sequence against the input. The data parameter is a pointer to
+// a match_sequence_state which holds the sequence.
+static const char* match_sequence(void* data, const char* input) {
+  struct match_sequence_state* state = data;
+  if (state->num_parts == 0) {
+    // The sequence is empty, so we match if and only if the resumption function
+    // matches.
+    return state->resume.func(state->resume.data, input);
   }
-  return input;
+  // Invoke match() with the first part and use a resumption function that will
+  // recursively invoke match_sequence for the remaining parts. This implements
+  // the backtracking behaviour, allowing the parser to handle inputs that
+  // cannot be handled by greedy parsing.
+  struct match_sequence_state next_state = {
+    .parts = state->parts + 1,
+    .num_parts = state->num_parts - 1,
+    .resume = state->resume,
+  };
+  return match(state->parts[0], input,
+               (struct match_resume){.data = &next_state,
+                                     .func = match_sequence});
 }
 
 // Try to match a given string to a rule. On a successful match, the position
 // immediately after the match is returned. Otherwise, NULL is returned.
-static const char* match(int rule, const char* input) {
+static const char* match(
+    int rule, const char* input, struct match_resume resume) {
   struct rule* r = &rules[rule];
   if (r->num_sequences == 0) {
-    return *input == r->literal ? input + 1 : NULL;
+    // Literal character. If the character does not match, we don't match.
+    // Otherwise, we match if the resumption function matches.
+    return *input == r->literal ? resume.func(resume.data, input + 1) : NULL;
   } else {
-    // TODO: Replace this with a shift-reduce parser. This will degrade horribly
-    // for some rules due to backtracking and it can't handle ambiguous
-    // prefixes.
+    // Compound rule. Try each sequence in the union and return the first
+    // succeeding match.
     for (int i = 0; i < r->num_sequences; i++) {
-      const char* result = match_sequence(&r->sequences[i], input);
+      struct match_sequence_state state = {
+        .parts = r->sequences[i].parts,
+        .num_parts = r->sequences[i].num_parts,
+        .resume = resume,
+      };
+      const char* result = match_sequence(&state, input);
       if (result) return result;
     }
     return NULL;
   }
 }
 
+static const char* match_end(void* data, const char* input) {
+  (void)data;
+  return *input == '\0' ? input : NULL;
+}
+
 static int part1() {
   int count = 0;
   for (int i = 0; i < num_messages; i++) {
-    const char* result = match(0, messages[i]);
+    const char* result = match(
+        0, messages[i], (struct match_resume){.func = match_end});
     if (result && *result == '\0') count++;
   }
   return count;
