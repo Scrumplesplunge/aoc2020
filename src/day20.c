@@ -280,46 +280,6 @@ static struct oriented_tile next_down(struct oriented_tile input) {
   return (struct oriented_tile){.tile = next, .orientation = orientation};
 }
 
-static struct oriented_tile next_left(struct oriented_tile input) {
-  const struct edges* e = &input.tile->edges[input.orientation];
-  const struct bucket* b = &buckets[e->left];
-  if (b->num_ids == 1) return (struct oriented_tile){.tile = NULL};
-  const struct tile* next =
-      get_tile(b->ids[0] == input.tile->id ? b->ids[1] : b->ids[0]);
-  unsigned char orientation = 0;
-  while (orientation < 8 && next->edges[orientation].right != e->left) {
-    orientation++;
-  }
-  if (orientation == 8) die("no matching orientation");
-  return (struct oriented_tile){.tile = next, .orientation = orientation};
-}
-
-static struct oriented_tile next_up(struct oriented_tile input) {
-  const struct edges* e = &input.tile->edges[input.orientation];
-  const struct bucket* b = &buckets[e->top];
-  if (b->num_ids == 1) return (struct oriented_tile){.tile = NULL};
-  const struct tile* next =
-      get_tile(b->ids[0] == input.tile->id ? b->ids[1] : b->ids[0]);
-  unsigned char orientation = 0;
-  while (orientation < 8 && next->edges[orientation].bottom != e->top) {
-    orientation++;
-  }
-  if (orientation == 8) die("no matching orientation");
-  return (struct oriented_tile){.tile = next, .orientation = orientation};
-}
-
-static void debug_neighbours(const struct oriented_tile t) {
-  write(STDOUT_FILENO, "tile: ", 6);
-  print_int64(t.tile->id);
-  struct oriented_tile neighbours[] =
-      {next_up(t), next_right(t), next_down(t), next_left(t)};
-  for (int i = 0; i < 4; i++) {
-    if (!neighbours[i].tile) continue;
-    write(STDOUT_FILENO, "neighbour: ", 11);
-    print_int64(neighbours[i].tile->id);
-  }
-}
-
 enum { monster_width = 20, monster_height = 3 };
 
 unsigned char transformed_grid[8 * grid_size][grid_size];
@@ -384,6 +344,7 @@ static unsigned long long part2() {
     left = next_down(left);
   }
   // Search for the sea monster in the grid.
+  int num_monsters = 0;
   for (int i = 0; i < 8; i++) {
     memset(transformed_grid, 0, sizeof(transformed_grid));
     if (i & flip_diagonally) {
@@ -416,38 +377,31 @@ static unsigned long long part2() {
         }
       }
     }
-    // Debug print the grid.
-    for (int y = 0; y < 8 * size; y++) {
-      for (int x = 0; x < 8 * size; x++) {
-        const _Bool value = (transformed_grid[y][x / 8] >> (7 - x % 8)) & 1;
-        write(STDOUT_FILENO, value ? "#" : ".", 1);
-      }
-      write(STDOUT_FILENO, "\n", 1);
-    }
-    const unsigned num_monsters = find_sea_monsters(size);
-    if (num_monsters > 0) {
-      // Count the populated cells.
-      int count = 0;
-      for (int y = 0; y < 8 * grid_size; y++) {
-        for (int x = 0; x < grid_size; x++) {
-          unsigned char c = grid[y][x];
-          c = (c & 0x55) + ((c >> 1) & 0x55);
-          c = (c & 0x33) + ((c >> 2) & 0x33);
-          c = (c & 0x0F) + ((c >> 4) & 0x0F);
-          count += c;
-        }
-      }
-      // Subtract all cells which are part of a sea monster. We are assuming
-      // that sea monsters do not overlap. If they do, we will underestimate the
-      // true value.
-      //                   #       1
-      // #    ##    ##    ### -> + 8
-      //  #  #  #  #  #  #       + 6 = 15
-      // 2513 too high.
-      return count - 15 * num_monsters;
+    const unsigned found = find_sea_monsters(size);
+    if (found) {
+      num_monsters = found;
+      break;
     }
   }
-  die("no monsters found");
+  // Count the populated cells.
+  int count = 0;
+  for (int y = 0; y < 8 * grid_size; y++) {
+    for (int x = 0; x < grid_size; x++) {
+      unsigned char c = grid[y][x];
+      c = (c & 0x55) + ((c >> 1) & 0x55);
+      c = (c & 0x33) + ((c >> 2) & 0x33);
+      c = (c & 0x0F) + ((c >> 4) & 0x0F);
+      count += c;
+    }
+  }
+  // Subtract all cells which are part of a sea monster. We are assuming
+  // that sea monsters do not overlap. If they do, we will underestimate the
+  // true value.
+  //                   #       1
+  // #    ##    ##    ### -> + 8
+  //  #  #  #  #  #  #       + 6 = 15
+  // 2513 too high.
+  return count - 15 * num_monsters;
 }
 
 int main() {
