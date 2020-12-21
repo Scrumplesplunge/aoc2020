@@ -87,10 +87,11 @@ static void read_input() {
   }
 }
 
+enum { set_size = (max_ingredients + 31) / 32 };
+// candidates[i] is the set of ingredients that might contain allergen i.
+unsigned candidates[max_allergens][set_size];
+
 static int part1() {
-  // candidates[i] is the set of ingredients that might contain allergen i.
-  enum { set_size = (max_ingredients + 31) / 32 };
-  unsigned candidates[max_allergens][set_size];
   memset(candidates, 0xFF, sizeof(candidates));
   for (int i = 0; i < num_foods; i++) {
     const struct food* f = &foods[i];
@@ -137,7 +138,88 @@ static int part1() {
   return count;
 }
 
+static int possible_ingredients(const unsigned* set) {
+  int count = 0;
+  for (int i = 0; i < set_size; i++) {
+    unsigned c = set[i];
+    c = (c & 0x55555555) + ((c >> 1) & 0x55555555);
+    c = (c & 0x33333333) + ((c >> 2) & 0x33333333);
+    c = (c & 0x0F0F0F0F) + ((c >> 4) & 0x0F0F0F0F);
+    c = (c & 0x00FF00FF) + ((c >> 8) & 0x00FF00FF);
+    c = (c & 0x0000FFFF) + ((c >> 16) & 0x0000FFFF);
+    count += c;
+  }
+  return count;
+}
+
+static unsigned char get_ingredient(const unsigned* set) {
+  if (possible_ingredients(set) != 1) die("ambiguous");
+  int i = 0;
+  while (!set[i]) i++;
+  int j = 0;
+  while ((set[i] & (1 << j)) == 0) j++;
+  return 32 * i + j;
+}
+
+static void part2() {
+  _Bool changed = 1;
+  while (changed) {
+    changed = 0;
+    // Find an allergen which is now uniquely identified.
+    for (int i = 0; i < num_allergens; i++) {
+      const unsigned* const row = candidates[i];
+      const int count = possible_ingredients(row);
+      if (count == 0) die("impossible");
+      if (count == 1) {
+        // Remove the ingredient from all other rows.
+        for (int k = 0; k < num_allergens; k++) {
+          if (i == k) continue;
+          for (int j = 0; j < set_size; j++) {
+            changed |= candidates[k][j] & row[j];
+            candidates[k][j] &= ~row[j];
+          }
+        }
+      }
+    }
+  }
+  // dangerous[a] is the ingredient which contains allergen a.
+  unsigned char dangerous[max_allergens];
+  for (int i = 0; i < num_allergens; i++) {
+    dangerous[i] = get_ingredient(candidates[i]);
+  }
+  // Sort the list of allergen names.
+  unsigned char sorted_allergens[max_allergens];
+  for (int i = 0; i < num_allergens; i++) sorted_allergens[i] = i;
+  for (int i = 0; i < num_allergens; i++) {
+    int min = i;
+    for (int j = i + 1; j < num_allergens; j++) {
+      if (strcmp(allergens[sorted_allergens[j]],
+                 allergens[sorted_allergens[min]]) < 0) {
+        min = j;
+      }
+    }
+    const unsigned char temp = sorted_allergens[i];
+    sorted_allergens[i] = sorted_allergens[min];
+    sorted_allergens[min] = temp;
+  }
+  // Print out the list.
+  char buffer[(max_size + 1) * max_allergens];
+  char* o = buffer;
+  int i = 0;
+  while (1) {
+    const char* name = ingredients[dangerous[sorted_allergens[i++]]];
+    const int length = strlen(name);
+    memcpy(o, name, length);
+    o += length;
+    if (i == num_allergens) break;
+    *o++ = ',';
+  }
+  *o++ = '\n';
+  write(STDOUT_FILENO, buffer, o - buffer);
+}
+
 int main() {
   read_input();
   print_int(part1());
+  part2();
 }
