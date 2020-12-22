@@ -76,42 +76,35 @@ static void read_input() {
 
 struct circular_buffer {
   unsigned char cards[max_cards];
-  int begin, size;
+  unsigned begin, size;
 };
 
 static unsigned char pop_front(struct circular_buffer* b) {
-  if (b->size == 0) die("bug");
   const unsigned char value = b->cards[b->begin];
-  b->begin++;
+  b->begin = (b->begin + 1) % max_cards;
   b->size--;
-  if (b->begin == max_cards) b->begin = 0;
   return value;
 }
 
 static void push_back(struct circular_buffer* b, unsigned char value) {
-  if (b->size == max_cards) die("bug");
-  int i = b->begin + b->size;
-  if (i >= max_cards) i -= max_cards;
+  const int i = (b->begin + b->size) % max_cards;
   b->cards[i] = value;
   b->size++;
 }
 
 static unsigned char pop_back(struct circular_buffer* b) {
-  if (b->size == 0) die("bug");
   b->size--;
-  int i = b->begin + b->size;
-  if (i >= max_cards) i -= max_cards;
+  const int i = (b->begin + b->size) % max_cards;
   return b->cards[i];
 }
 
-static int init_hands(struct circular_buffer* hands) {
+static void init_hands(struct circular_buffer* hands) {
   memcpy(hands[0].cards, input_hands[0].cards, input_hands[0].num_cards);
   hands[0].begin = 0;
   hands[0].size = input_hands[0].num_cards;
   memcpy(hands[1].cards, input_hands[1].cards, input_hands[1].num_cards);
   hands[1].begin = 0;
   hands[1].size = input_hands[1].num_cards;
-  return hands[0].size + hands[1].size;
 }
 
 static int score(struct circular_buffer* winner) {
@@ -122,9 +115,9 @@ static int score(struct circular_buffer* winner) {
 
 static int part1() {
   struct circular_buffer hands[2];
-  const int num_cards = init_hands(hands);
+  init_hands(hands);
   // Play the game.
-  while (hands[0].size != num_cards && hands[1].size != num_cards) {
+  while (hands[0].size && hands[1].size) {
     const unsigned char a = pop_front(&hands[0]);
     const unsigned char b = pop_front(&hands[1]);
     if (a < b) {
