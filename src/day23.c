@@ -46,17 +46,6 @@ static struct node* step(
   removed->next->next->next = destination->next;
   destination->next = removed;
   return current->next;
-  // struct node* j = first;
-  // for (int i = 0; i < 9; i++, j = j->next) {
-  //   char out[] = "  ? ";
-  //   out[2] = j - nodes + '1';
-  //   if (j == current) {
-  //     out[1] = '(';
-  //     out[3] = ')';
-  //   }
-  //   write(STDOUT_FILENO, out, 4);
-  // }
-  // write(STDOUT_FILENO, "\n", 1);
 }
 
 static void part1(const char* input) {
