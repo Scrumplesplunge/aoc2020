@@ -29,15 +29,13 @@ int main() {
     // Remove 3 nodes from after the current one.
     struct node* const removed = current->next;
     current->next = current->next->next->next->next;
-    struct node* destination = NULL;
-    int best_diff = 10;
-    for (struct node* i = current->next; i != current; i = i->next) {
-      int diff = (current - i + 10) % 10;
-      if (diff < best_diff) {
-        best_diff = diff;
-        destination = i;
-      }
-    }
+    const int a = removed - nodes, b = removed->next - nodes,
+              c = removed->next->next - nodes;
+    int d = current - nodes;
+    do {
+      d = d == 0 ? 8 : d - 1;
+    } while (d == a || d == b || d == c);
+    struct node* const destination = &nodes[d];
     removed->next->next->next = destination->next;
     destination->next = removed;
     current = current->next;
