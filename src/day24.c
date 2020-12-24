@@ -21,6 +21,7 @@ static void print_int(int x) {
   write(STDOUT_FILENO, buffer + i, 16 - i);
 }
 
+enum { max_chain = 30, grid_size = 64 };
 enum direction { done, flip, e, se, sw, w, nw, ne };
 
 unsigned char steps[32768];
@@ -34,7 +35,10 @@ static void read_input() {
   char* const end = buffer + length;
   unsigned char* o = steps;
   while (i != end) {
+    int chain = 0;
     while (*i != '\n') {
+      if (chain == max_chain) die("too long");
+      chain++;
       switch (*i++) {
         case 'e':
           *o++ = e;
@@ -82,17 +86,17 @@ static void read_input() {
 //  \__/ E\__/      |NE| E|            |SE|SW|
 //     \__/         +--+--+            +--+--+
 
-static _Bool grid[64][64];
+static _Bool grid[grid_size][grid_size];
 
 static int part1() {
-  _Bool* const origin = &grid[32][32];
+  _Bool* const origin = &grid[grid_size / 2][grid_size / 2];
   const int step[] = {
-    [ne] = -65,
-    [nw] = -64,
+    [ne] = -grid_size - 1,
+    [nw] = -grid_size,
     [e] = -1,
     [w] = 1,
-    [se] = 64,
-    [sw] = 65,
+    [se] = grid_size,
+    [sw] = grid_size + 1,
   };
   unsigned char* i = steps;
   _Bool* position = origin;
@@ -106,8 +110,8 @@ static int part1() {
     i++;
   }
   int total = 0;
-  for (int y = 0; y < 64; y++) {
-    for (int x = 0; x < 64; x++) {
+  for (int y = 0; y < grid_size; y++) {
+    for (int x = 0; x < grid_size; x++) {
       total += grid[y][x];
     }
   }
