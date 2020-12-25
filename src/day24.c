@@ -21,8 +21,8 @@ static void print_int(int x) {
   write(STDOUT_FILENO, buffer + i, 16 - i);
 }
 
-enum { max_chain = 30, grid_size = 64 };
-enum direction { done, flip, e, se, sw, w, nw, ne };
+enum { grid_size = 256, max_chain = grid_size / 2 - 101 };
+enum direction { e, se, sw, w, nw, ne, done, flip };
 
 unsigned char steps[32768];
 
@@ -86,10 +86,10 @@ static void read_input() {
 //  \__/ E\__/      |NE| E|            |SE|SW|
 //     \__/         +--+--+            +--+--+
 
-static _Bool grid[grid_size][grid_size];
+static unsigned char grid[2][grid_size * grid_size];
 
 static int part1() {
-  _Bool* const origin = &grid[grid_size / 2][grid_size / 2];
+  unsigned char* const origin = &grid[0][grid_size * grid_size / 2];
   const int step[] = {
     [ne] = -grid_size - 1,
     [nw] = -grid_size,
@@ -99,7 +99,7 @@ static int part1() {
     [sw] = grid_size + 1,
   };
   unsigned char* i = steps;
-  _Bool* position = origin;
+  unsigned char* position = origin;
   while (*i != done) {
     if (*i == flip) {
       *position = !*position;
@@ -110,15 +110,46 @@ static int part1() {
     i++;
   }
   int total = 0;
-  for (int y = 0; y < grid_size; y++) {
-    for (int x = 0; x < grid_size; x++) {
-      total += grid[y][x];
+  for (int i = 0; i < grid_size * grid_size; i++) total += grid[0][i];
+  return total;
+}
+
+static int part2() {
+  const int step[] = {
+    [ne] = -grid_size - 1,
+    [nw] = -grid_size,
+    [e] = -1,
+    [w] = 1,
+    [se] = grid_size,
+    [sw] = grid_size + 1,
+  };
+  const int begin = grid_size + 1;
+  const int end = grid_size * grid_size - grid_size - 1;
+  for (int day = 0; day < 100; day++) {
+    const _Bool parity = day % 2;
+    unsigned char *input = grid[parity];
+    unsigned char *output = grid[1 - parity];
+    memset(output, 0, sizeof(grid[parity]));
+    for (int i = 0; i < 6; i++) {
+      for (int j = begin; j < end; j++) output[j] += input[j + step[i]];
+    }
+    for (int i = begin; i < end; i++) {
+      const _Bool active = input[i];
+      const unsigned char neighbours = output[i];
+      if (active) {
+        output[i] = neighbours == 1 || neighbours == 2;
+      } else {
+        output[i] = neighbours == 2;
+      }
     }
   }
+  int total = 0;
+  for (int i = 0; i < grid_size * grid_size; i++) total += grid[0][i];
   return total;
 }
 
 int main() {
   read_input();
   print_int(part1());
+  print_int(part2());
 }
