@@ -57,6 +57,65 @@ static unsigned mod_exp(unsigned a, unsigned b) {
   return result;
 }
 
+// An entry stores a pair: 7^exponent = value (mod 20201227)
+struct entry {
+  unsigned value;
+  unsigned exponent;
+};
+
+static void sift_down(struct entry* values, int num_values, int i) {
+  const struct entry x = values[i];
+  while (1) {
+    const int l = 2 * i + 1, r = l + 1;
+    if (num_values <= l) break;
+    const int max_child =
+        r < num_values && values[l].value < values[r].value ? r : l;
+    if (x.value >= values[max_child].value) break;
+    values[i] = values[max_child];
+    i = max_child;
+  }
+  values[i] = x;
+}
+
+// Find x such that a^x = b (mod 20201227).
+static unsigned mod_log(unsigned a, unsigned b) {
+  enum { table_size = 5000 };
+  struct entry table[table_size];
+  // Populate the table values.
+  unsigned e = 1;
+  for (int i = 0; i < table_size; i++) {
+    table[i] = (struct entry){.value = e, .exponent = i};
+    e = a * e % 20201227;
+  }
+  // Sort the table.
+  for (int i = table_size - 1; i >= 0; i--) sift_down(table, table_size, i);
+  for (int i = table_size - 1; i >= 0; i--) {
+    const struct entry x = table[0];
+    table[0] = table[i];
+    sift_down(table, i, 0);
+    table[i] = x;
+  }
+  // Search for the exponent.
+  const unsigned factor = mod_exp(a, 20201227 - 1 - table_size);
+  unsigned exponent = 0;
+  e = b;
+  while (1) {
+    // Find the value in the table.
+    unsigned i = 0, j = table_size;
+    while (j - i > 1) {
+      unsigned mid = i + (j - i) / 2;
+      if (table[mid].value <= e) {
+        i = mid;
+      } else {
+        j = mid;
+      }
+    }
+    if (table[i].value == e) return exponent + table[i].exponent;
+    e = mod_mul(e, factor);
+    exponent += table_size;
+  }
+}
+
 int main() {
   char buffer[32];
   const int length = read(STDIN_FILENO, buffer, sizeof(buffer));
@@ -69,12 +128,8 @@ int main() {
   i = read_int(i + 1, &card);
   if (*i != '\n') die("line");
   if (i + 1 - buffer != length) die("syntax");
-  unsigned loop_size = 0, x = 1;
   // Find the loop size for the door.
-  while (x != door) {
-    loop_size++;
-    x = x * 7 % 20201227;
-  }
+  const unsigned loop_size = mod_log(7, door);
   // Compute the key.
   print_int(mod_exp(card, loop_size));
 }
