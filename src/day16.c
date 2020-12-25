@@ -187,14 +187,11 @@ static unsigned long long part2() {
   memset(indices, -1, sizeof(indices));
   if (!deduce_fields(indices)) die("cannot deduce mapping");
   // Accumulate the departure fields.
-  int count = 0;
   unsigned long long total = 1;
   for (int i = 0; i < num_fields; i++) {
     if (strncmp(fields[i].name, "departure ", 10) != 0) continue;
     total *= tickets[0].values[indices[i]];
-    count++;
   }
-  if (count != 6) die("wrong number of fields");
   return total;
 }
 
