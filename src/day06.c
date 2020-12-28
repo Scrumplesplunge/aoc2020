@@ -1,9 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_lower(char c) {
-  return 'a' <= c && c <= 'z';
-}
+#include "util/is_lower.h"
 
 // Returns the number of bits set in an unsigned int.
 static unsigned bits_set(unsigned x) {

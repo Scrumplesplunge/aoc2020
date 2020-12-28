@@ -1,10 +1,7 @@
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"
-
-static _Bool is_lower(char c) {
-  return 'a' <= c && c <= 'z';
-}
+#include "util/is_lower.h"
 
 enum opcode {
   nop,
