@@ -2,7 +2,10 @@
 
 These are my solutions to Advent of Code 2020. To challenge myself, I am going
 to try to solve every problem in plain C, with no libraries, using only `read`,
-`write` and `exit` to interact with the outside world.
+`write` and `exit` to interact with the outside world. The result of this is
+very tiny binaries:
+
+![Most binaries are under 2KiB, some are under 500B](sizes.png)
 
 ## Build
 
