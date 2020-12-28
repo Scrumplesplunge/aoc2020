@@ -1,25 +1,9 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
+#include "util/read_int.h"
 
 static _Bool is_lower(char c) {
   return 'a' <= c && c <= 'z';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static char* read_int(char* input, int* value) {
-  if (!is_digit(*input)) die("int");
-  int temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
 }
 
 enum opcode {
@@ -75,8 +59,8 @@ static void read_input() {
     i += 4;
     const _Bool negative = *i == '-';
     i++;
-    int value;
-    i = read_int(i, &value);
+    unsigned value;
+    i = (char*)read_int(i, &value);
     op->argument = negative ? -value : value;
     if (*i != '\n') die("line");
     i++;

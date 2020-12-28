@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int64.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned long long* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned long long temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int64.h"
 
 enum { max_numbers = 1024 };
 static char buffer[16384];
@@ -35,14 +19,14 @@ static void read_input() {
   if (*i == '#') {
     i++;
     unsigned long long temp;
-    i = read_int(i, &temp);
+    i = read_int64(i, &temp);
     if (*i != '\n') die("syntax");
     i++;
     if (temp > 25) die("prelude too big");
     prelude_size = temp;
   }
   while (i != end) {
-    i = read_int(i, &numbers[num_numbers++]);
+    i = read_int64(i, &numbers[num_numbers++]);
     if (*i != '\n') die("line");
     i++;
   }

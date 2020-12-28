@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned short* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned short temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int16.h"
 
 enum action {
   north,
@@ -62,7 +46,7 @@ static void read_input() {
     struct instruction* instruction = &instructions[num_instructions++];
     instruction->action = parse_action(*i);
     unsigned short value;
-    i = read_int(i + 1, &value);
+    i = read_int16(i + 1, &value);
     if (instruction->action == left || instruction->action == right) {
       // We'll go off the grid if the angles aren't multiples of 90, and it is
       // easier to work with the quotient anyway.

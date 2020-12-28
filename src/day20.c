@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int64.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned short* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned short temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int16.h"
 
 // Composable transformations:
 // +-one-+ +-rouf+ +-eno-+ +four-+ +eerht+ +-two-+ +three+ +-owt-+
@@ -77,7 +61,7 @@ static void read_input() {
     if (num_tiles == max_tiles) die("too many");
     if (strncmp(i, "Tile ", 5) != 0) die("syntax");
     struct tile* t = &tiles[num_tiles++];
-    i = read_int(i + 5, &t->id);
+    i = read_int16(i + 5, &t->id);
     if (t->id == 0) die("zero id");
     if (strncmp(i, ":\n", 2) != 0) die("syntax");
     i += 2;

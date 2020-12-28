@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int64.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static char* read_int(char* input, unsigned short* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned short temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int16.h"
 
 struct range {
   unsigned short min, max;
@@ -45,7 +29,7 @@ static char* read_ticket(char* i, struct ticket* t) {
   int num_values = 0;
   while (1) {
     if (num_values == num_fields) die("too many values");
-    i = read_int(i, &t->values[num_values++]);
+    i = (char*)read_int16(i, &t->values[num_values++]);
     if (*i != ',') break;
     i++;
   }
@@ -182,13 +166,13 @@ int main() {
     f->name = i;
     while (*i != ':') i++;
     *i = '\0';
-    i = read_int(i + 2, &f->ranges[0].min);
+    i = (char*)read_int16(i + 2, &f->ranges[0].min);
     if (*i != '-') die("bad");
-    i = read_int(i + 1, &f->ranges[0].max);
+    i = (char*)read_int16(i + 1, &f->ranges[0].max);
     // " or "
-    i = read_int(i + 4, &f->ranges[1].min);
+    i = (char*)read_int16(i + 4, &f->ranges[1].min);
     if (*i != '-') die("bad");
-    i = read_int(i + 1, &f->ranges[1].max);
+    i = (char*)read_int16(i + 1, &f->ranges[1].max);
     if (*i != '\n') die("line");
     i++;
   }

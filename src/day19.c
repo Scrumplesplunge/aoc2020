@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static char* read_int(char* input, unsigned* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int.h"
 
 enum { max_parts = 3, max_sequences = 2, max_rules = 256, max_messages = 1024 };
 struct sequence {
@@ -48,7 +32,7 @@ static void read_input() {
   // Parse the rules.
   while (i != end && *i != '\n') {
     unsigned id;
-    i = read_int(i, &id);
+    i = (char*)read_int(i, &id);
     if (*i != ':') die("colon");
     if (id >= max_rules) die("too many rules");
     struct rule* r = &rules[id];
@@ -66,7 +50,7 @@ static void read_input() {
         while (*i != '|') {
           if (s->num_parts == max_parts) die("too many parts");
           unsigned x;
-          i = read_int(i, &x);
+          i = (char*)read_int(i, &x);
           if (x >= max_rules) die("bad reference");
           s->parts[s->num_parts++] = x;
           if (*i == '\n') break;

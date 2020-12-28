@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static char* read_int(char* input, int* value) {
-  if (!is_digit(*input)) return NULL;
-  int temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int.h"
 
 static char buffer[65536];
 
@@ -63,11 +47,11 @@ int main() {
   char* const end = buffer + len;
   while (i < end) {
     if (num_entries == max_entries) die("too many");
-    int min, max;
-    i = read_int(i, &min);
+    unsigned min, max;
+    i = (char*)read_int(i, &min);
     if (i == NULL || min > 255) die("lower bound");
     if (*i != '-') die("hyphen");
-    i = read_int(i + 1, &max);
+    i = (char*)read_int(i + 1, &max);
     if (i == NULL || min > 255) die("upper bound");
     if (*i != ' ') die("space");
     char c = i[1];

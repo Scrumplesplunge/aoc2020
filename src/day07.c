@@ -1,9 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
+#include "util/read_int.h"
 
 // Consume a prefix from a string (returning the position after the prefix), or
 // return NULL on failure.
@@ -20,19 +17,6 @@ static char* consume(char* input, const char* prefix) {
   char* after = try_consume(input, prefix);
   if (after == NULL) die("syntax");
   return after;
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static char* read_int(char* input, int* value) {
-  if (!is_digit(*input)) die("int");
-  int temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
 }
 
 struct style {
@@ -140,13 +124,13 @@ int main() {
     i = read_style(i, &style);
     i = consume(i, "bags contain ");
     while (1) {
-      int count;
+      unsigned count;
       char* after = try_consume(i, "no other bags");
       if (after) {
         i = after;
         break;
       }
-      i = read_int(i, &count);
+      i = (char*)read_int(i, &count);
       i = consume(i, " ");
       int inner_style;
       i = read_style(i, &inner_style);

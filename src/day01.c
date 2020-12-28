@@ -1,27 +1,11 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, int* value) {
-  if (!is_digit(*input)) die("bad");
-  int temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int.h"
 
 static char buffer[1024];
 enum { max_numbers = 200 };
 // The list of input numbers.
-static int numbers[max_numbers];
+static unsigned numbers[max_numbers];
 static int n;
 // A set indexed by values from the numbers array, which is 1 iff the value is
 // in the list.
@@ -56,10 +40,10 @@ static int part1(void) {
 
 static int part2(void) {
   for (int i = 0; i < n; i++) {
-    int remaining = 2020 - numbers[i];
+    unsigned remaining = 2020 - numbers[i];
     for (int j = i + 1; j < n; j++) {
       if (numbers[j] > remaining) continue;
-      const int num_k = remaining - numbers[j];
+      const unsigned num_k = remaining - numbers[j];
       if (set[num_k]) {
         return numbers[i] * numbers[j] * num_k;
       }

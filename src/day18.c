@@ -1,22 +1,6 @@
 #include "util/die.h"
 #include "util/print_int64.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned long long* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned long long temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
-}
+#include "util/read_int64.h"
 
 static const char* part1_expr(const char* i, unsigned long long* result);
 
@@ -26,7 +10,7 @@ static const char* part1_term(const char* i, unsigned long long* result) {
     if (*i != ')') die("brackets");
     return i + 1;
   } else {
-    return read_int(i, result);
+    return read_int64(i, result);
   }
 }
 
@@ -73,7 +57,7 @@ static const char* part2_term(const char* i, unsigned long long* result) {
     if (*i != ')') die("brackets");
     return i + 1;
   } else {
-    return read_int(i, result);
+    return read_int64(i, result);
   }
 }
 

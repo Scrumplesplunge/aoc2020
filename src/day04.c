@@ -1,9 +1,6 @@
 #include "util/die.h"
 #include "util/print_int.h"
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
+#include "util/read_int.h"
 
 static _Bool is_lower(char c) {
   return 'a' <= c && c <= 'z';
@@ -15,19 +12,6 @@ static _Bool is_whitespace(char c) {
 
 static _Bool is_hex(char c) {
   return is_digit(c) || ('a' <= c && c <= 'f');
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, int* value) {
-  if (!is_digit(*input)) return NULL;
-  int temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
 }
 
 #define KEY3(a, b, c) ((unsigned)(a) | (unsigned)(b) << 8 | (unsigned)(c) << 16)
@@ -75,9 +59,9 @@ static char* read_entry(char* i, struct entry* out) {
 
 static char buffer[32768];
 
-static _Bool check_year(struct entry* e, int min, int max) {
+static _Bool check_year(struct entry* e, unsigned min, unsigned max) {
   if (e->value_length != 4) return 0;
-  int value;
+  unsigned value;
   if (read_int(e->value, &value) != e->value + 4) return 0;
   return min <= value && value <= max;
 }
@@ -87,7 +71,7 @@ static _Bool check_height(struct entry* e) {
   const char* const unit = e->value + e->value_length - 2;
   const _Bool is_cm = unit[0] == 'c' && unit[1] == 'm';
   const _Bool is_in = unit[0] == 'i' && unit[1] == 'n';
-  int value;
+  unsigned value;
   if (read_int(e->value, &value) != unit) return 0;
   if (is_cm) {
     return 150 <= value && value <= 193;
@@ -125,7 +109,7 @@ static _Bool check_eyes(struct entry* e) {
 
 static _Bool check_pid(struct entry* e) {
   if (e->value_length != 9) return 0;
-  int x;
+  unsigned x;
   return read_int(e->value, &x) == e->value + 9;
 }
 

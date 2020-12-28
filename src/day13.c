@@ -1,5 +1,6 @@
 #include "util/die.h"
 #include "util/print_int64.h"
+#include "util/read_int.h"
 
 // GCC automatically generates calls to __udivdi3 and __umoddi3 when attempting
 // division with `unsigned long long` variables, so we need to provide
@@ -40,23 +41,6 @@ __attribute__((pure)) unsigned long long __udivdi3(unsigned long long a,
 __attribute__((pure)) unsigned long long __umoddi3(unsigned long long a,
                                                    unsigned long long b) {
   return divmod(a, b).remainder;
-}
-
-static _Bool is_digit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-// Read a decimal integer from the string at input into value, returning the
-// address of the first byte after the integer.
-static const char* read_int(const char* input, unsigned* value) {
-  if (!is_digit(*input)) die("int");
-  unsigned temp = 0;
-  while (is_digit(*input)) {
-    temp = 10 * temp + (*input - '0');
-    input++;
-  }
-  *value = temp;
-  return input;
 }
 
 // Round x up to the next multiple of k.
