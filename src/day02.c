@@ -1,20 +1,8 @@
 #include "util/die.h"
+#include "util/print_int.h"
 
 static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';
-}
-
-// Print an integer in decimal, followed by a newline.
-static void print_int(int x) {
-  char buffer[16];
-  buffer[15] = '\n';
-  int i = 15;
-  do {
-    --i;
-    buffer[i] = '0' + (x % 10);
-    x /= 10;
-  } while (x);
-  write(STDOUT_FILENO, buffer + i, 16 - i);
 }
 
 // Read a decimal integer from the string at input into value, returning the
