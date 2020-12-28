@@ -1,9 +1,4 @@
-// Exit the program with an error message.
-__attribute__((noreturn)) static void die(const char* message) {
-  write(STDERR_FILENO, message, strlen(message));
-  write(STDERR_FILENO, "\n", 1);
-  exit(1);
-}
+#include "util/die.h"
 
 // Print an integer in decimal, followed by a newline.
 static void print_int(int x) {

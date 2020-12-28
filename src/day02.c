@@ -1,9 +1,4 @@
-// Exit the program with a given error message.
-__attribute__((noreturn)) static void die(const char* message) {
-  write(STDERR_FILENO, message, strlen(message));
-  write(STDERR_FILENO, "\n", 1);
-  exit(1);
-}
+#include "util/die.h"
 
 static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';

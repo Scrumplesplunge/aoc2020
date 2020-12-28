@@ -1,3 +1,5 @@
+#include "util/die.h"
+
 // GCC automatically generates calls to __udivdi3 and __umoddi3 when attempting
 // division with `unsigned long long` variables, so we need to provide
 // a definition. However, it seems that these magic symbols don't get GC'd
@@ -37,13 +39,6 @@ __attribute__((pure)) unsigned long long __udivdi3(unsigned long long a,
 __attribute__((pure)) unsigned long long __umoddi3(unsigned long long a,
                                                    unsigned long long b) {
   return divmod(a, b).remainder;
-}
-
-// Exit the program with a given error message.
-__attribute__((noreturn)) static void die(const char* message) {
-  write(STDERR_FILENO, message, strlen(message));
-  write(STDERR_FILENO, "\n", 1);
-  exit(1);
 }
 
 // Print an integer in decimal, followed by a newline.
