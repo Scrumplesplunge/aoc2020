@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 
 static char buffer[65536];
 
@@ -38,6 +38,6 @@ int main() {
   while (buffer[width] != '\n') width++;
   if (len % (width + 1)) die("bad input");
   const int height = len / (width + 1);
-  print_int64(part1(width, height));
-  print_int64(part2(width, height));
+  printf("%u\n", part1(width, height));
+  printf("%llu\n", part2(width, height));
 }

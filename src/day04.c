@@ -1,7 +1,7 @@
 #include "util/die.h"
-#include "util/print_int.h"
-#include "util/read_int.h"
 #include "util/is_lower.h"
+#include "util/printf.h"
+#include "util/read_int.h"
 
 static _Bool is_whitespace(char c) {
   return c == ' ' || c == '\n';
@@ -154,6 +154,5 @@ int main() {
   while (i < end) {
     i = check_passport(i, end, &num_valid);
   }
-  print_int(num_valid.part1);
-  print_int(num_valid.part2);
+  printf("%u\n%u\n", num_valid.part1, num_valid.part2);
 }

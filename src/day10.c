@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int16.h"
 
 enum { max_numbers = 256 };
@@ -30,8 +30,8 @@ static void read_input() {
   }
 }
 
-static int part1() {
-  int counts[4] = {0};
+static unsigned part1() {
+  unsigned counts[4] = {0};
   int value = 0;
   for (int i = 0; i < num_numbers; i++) {
     int delta = numbers[i] - value;
@@ -60,6 +60,6 @@ static unsigned long long part2() {
 
 int main() {
   read_input();
-  print_int64(part1());
-  print_int64(part2());
+  printf("%u\n", part1());
+  printf("%llu\n", part2());
 }

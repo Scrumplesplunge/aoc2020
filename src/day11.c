@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memcpy.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 
 enum { max_size = 128 };
 
@@ -148,8 +148,8 @@ static int part2_adjacent(const struct grid* source, int x, int y) {
 int main() {
   read_input();
   // Part 1.
-  print_int(find_seated(4, part1_adjacent));
+  printf("%u\n", find_seated(4, part1_adjacent));
   // Part 2.
   part2_init();
-  print_int(find_seated(5, part2_adjacent));
+  printf("%u\n", find_seated(5, part2_adjacent));
 }

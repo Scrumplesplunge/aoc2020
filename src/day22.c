@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memcpy.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int8.h"
 #include "util/strncmp.h"
 
@@ -173,6 +173,6 @@ static int part2() {
 
 int main() {
   read_input();
-  print_int(part1());
-  print_int(part2());
+  printf("%u\n", part1());
+  printf("%u\n", part2());
 }

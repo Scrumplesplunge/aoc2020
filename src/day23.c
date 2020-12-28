@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 
 struct node {
   struct node* next;
@@ -66,7 +66,7 @@ static void part2(const char* input) {
   const struct node* const one = &nodes[0];
   unsigned long long a = one->next - nodes + 1;
   unsigned long long b = one->next->next - nodes + 1;
-  print_int64(a * b);
+  printf("%llu\n", a * b);
 }
 
 int main() {

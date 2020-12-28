@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memset.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 
 enum { grid_size = 256, max_chain = grid_size / 2 - 101 };
 enum direction { e, se, sw, w, nw, ne, done, flip };
@@ -131,6 +131,6 @@ static int part2() {
 
 int main() {
   read_input();
-  print_int(part1());
-  print_int(part2());
+  printf("%u\n", part1());
+  printf("%u\n", part2());
 }

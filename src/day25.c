@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 static unsigned mod_mul(unsigned a, unsigned b) {
@@ -95,5 +95,5 @@ int main() {
   // Find the loop size for the door.
   const unsigned loop_size = mod_log(7, door);
   // Compute the key.
-  print_int(mod_exp(card, loop_size));
+  printf("%u\n", mod_exp(card, loop_size));
 }

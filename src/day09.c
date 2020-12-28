@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int64.h"
 
 enum { max_numbers = 1024 };
@@ -80,6 +80,5 @@ static unsigned long long part2(unsigned long long key) {
 int main() {
   read_input();
   const unsigned long long key = part1();
-  print_int64(key);
-  print_int64(part2(key));
+  printf("%llu\n%llu\n", key, part2(key));
 }

@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memset.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 #include "util/strcmp.h"
 
@@ -159,6 +159,5 @@ int main() {
   visit(shiny_gold);
   int total = 0;
   for (int i = 0; i < max_styles; i++) total += visited[i];
-  print_int(total);
-  print_int(count_children(shiny_gold));
+  printf("%u\n%u\n", total, count_children(shiny_gold));
 }

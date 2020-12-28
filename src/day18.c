@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int64.h"
 
 static const char* part1_expr(const char* i, unsigned long long* result);
@@ -110,6 +110,6 @@ int main() {
   if (buffer[length - 1] != '\n') die("newline");
   const char* i = buffer;
   const char* const end = buffer + length;
-  print_int64(part1(i, end));
-  print_int64(part2(i, end));
+  printf("%llu\n", part1(i, end));
+  printf("%llu\n", part2(i, end));
 }

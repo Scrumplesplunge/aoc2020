@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memset.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int16.h"
 #include "util/strncmp.h"
 
@@ -187,6 +187,6 @@ int main() {
   i += 16;
   const char* const end = buffer + length;
   while (i != end) i = read_ticket(i, &tickets[num_tickets++]);
-  print_int64(part1());
-  print_int64(part2());
+  printf("%u\n", part1());
+  printf("%llu\n", part2());
 }

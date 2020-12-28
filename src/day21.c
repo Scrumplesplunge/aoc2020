@@ -2,9 +2,9 @@
 #include "util/memcpy.h"
 #include "util/memset.h"
 #include "util/popcount.h"
-#include "util/print_int.h"
 #include "util/strcmp.h"
 #include "util/strncmp.h"
+#include "util/printf.h"
 
 // Intern a string into a collection.
 enum { max_size = 16 };
@@ -187,6 +187,6 @@ static void part2() {
 
 int main() {
   read_input();
-  print_int(part1());
+  printf("%u\n", part1());
   part2();
 }

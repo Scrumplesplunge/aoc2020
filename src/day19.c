@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 enum { max_parts = 3, max_sequences = 2, max_rules = 256, max_messages = 1024 };
@@ -160,7 +160,7 @@ static int count_matches() {
 
 int main() {
   read_input();
-  print_int(count_matches());
+  printf("%u\n", count_matches());
   rules[8] = (struct rule){
     .num_sequences = 2,
     .sequences = {
@@ -175,5 +175,5 @@ int main() {
       {.num_parts = 3, .parts = {42, 11, 31}},
     },
   };
-  print_int(count_matches());
+  printf("%u\n", count_matches());
 }

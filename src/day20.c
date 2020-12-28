@@ -1,7 +1,7 @@
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/memset.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int16.h"
 #include "util/strncmp.h"
 
@@ -367,6 +367,6 @@ static unsigned long long part2() {
 
 int main() {
   read_input();
-  print_int64(part1());
-  print_int64(part2());
+  printf("%llu\n", part1());
+  printf("%llu\n", part2());
 }

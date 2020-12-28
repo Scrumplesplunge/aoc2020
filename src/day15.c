@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memset.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 static unsigned spoken[30000001];
@@ -28,7 +28,7 @@ int main() {
     turn++;
     last_number = answer;
   }
-  print_int(last_number);
+  printf("%u\n", last_number);
   while (turn < 30000000) {
     const unsigned answer =
         spoken[last_number] != (unsigned)-1 ? turn - spoken[last_number] : 0;
@@ -36,5 +36,5 @@ int main() {
     turn++;
     last_number = answer;
   }
-  print_int(last_number);
+  printf("%u\n", last_number);
 }

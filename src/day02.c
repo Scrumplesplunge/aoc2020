@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 static char buffer[65536];
@@ -64,6 +64,6 @@ int main() {
         (struct entry){.min = min, .max = max, .c = c, .password = password};
     i++;
   }
-  print_int(part1());
-  print_int(part2());
+  printf("%u\n", part1());
+  printf("%u\n", part2());
 }

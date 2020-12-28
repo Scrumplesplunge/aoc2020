@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/division.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 // Round x up to the next multiple of k.
@@ -8,7 +8,7 @@ static unsigned round_up(unsigned x, unsigned k) {
   return (x + k - 1) / k * k;
 }
 
-static int part1(const char* input) {
+static unsigned part1(const char* input) {
   unsigned earliest_departure;
   enum { max_buses = 16 };
   unsigned buses[max_buses];
@@ -86,6 +86,6 @@ int main() {
   if (length <= 0) die("read");
   if (buffer[length - 1] != '\n') die("newline");
   buffer[length] = '\0';
-  print_int64(part1(buffer));
-  print_int64(part2(buffer));
+  printf("%u\n", part1(buffer));
+  printf("%llu\n", part2(buffer));
 }

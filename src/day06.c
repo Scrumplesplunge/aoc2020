@@ -1,7 +1,7 @@
 #include "util/die.h"
 #include "util/popcount.h"
-#include "util/print_int.h"
 #include "util/is_lower.h"
+#include "util/printf.h"
 
 static char input[32768];
 
@@ -35,6 +35,5 @@ int main() {
     any_count += popcount(any);
     all_count += popcount(all);
   }
-  print_int(any_count);
-  print_int(all_count);
+  printf("%u\n%u\n", any_count, all_count);
 }

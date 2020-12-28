@@ -1,7 +1,7 @@
 #include "util/die.h"
-#include "util/print_int.h"
-#include "util/read_int.h"
 #include "util/is_lower.h"
+#include "util/printf.h"
+#include "util/read_int.h"
 
 enum opcode {
   nop,
@@ -151,6 +151,6 @@ static int part2() {
 
 int main() {
   read_input();
-  print_int(part1());
-  print_int(part2());
+  printf("%u\n", part1());
+  printf("%u\n", part2());
 }

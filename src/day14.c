@@ -1,5 +1,5 @@
 #include "util/die.h"
-#include "util/print_int64.h"
+#include "util/printf.h"
 #include "util/read_int.h"
 
 enum operation {
@@ -144,6 +144,6 @@ static unsigned long long part2() {
 
 int main() {
   read_input();
-  print_int64(part1());
-  print_int64(part2());
+  printf("%llu\n", part1());
+  printf("%llu\n", part2());
 }

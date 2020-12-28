@@ -1,6 +1,6 @@
 #include "util/die.h"
 #include "util/memset.h"
-#include "util/print_int.h"
+#include "util/printf.h"
 
 enum { size_x = 32, size_y = 32, size_z = 16, size_w = 16 };
 static _Bool part1_cells[2][size_z][size_y][size_x];
@@ -136,6 +136,6 @@ static int part2() {
 
 int main() {
   read_input();
-  print_int(part1());
-  print_int(part2());
+  printf("%u\n", part1());
+  printf("%u\n", part2());
 }
