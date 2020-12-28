@@ -5,20 +5,10 @@ static _Bool is_digit(char c) {
   return '0' <= c && c <= '9';
 }
 
-static _Bool is_whitespace(char c) {
-  return c == ' ' || c == '\n';
-}
-
-// Advance the given pointer until it does not point at whitespace.
-static const char* skip_whitespace(const char* input) {
-  while (is_whitespace(*input)) input++;
-  return input;
-}
-
 // Read a decimal integer from the string at input into value, returning the
 // address of the first byte after the integer.
 static const char* read_int(const char* input, int* value) {
-  if (!is_digit(*input)) return NULL;
+  if (!is_digit(*input)) die("bad");
   int temp = 0;
   while (is_digit(*input)) {
     temp = 10 * temp + (*input - '0');
@@ -40,18 +30,18 @@ static char set[2021];
 // Parse the input into `numbers` and `set`.
 static void read_input() {
   int len = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
-  if (len == -1) die("read");
+  if (len <= 0) die("bad");
+  if (buffer[len - 1] != '\n') die("bad");
   const char* i = buffer;
   const char* const end = buffer + len;
   while (i != end) {
-    i = skip_whitespace(i);
-    if (i == end) break;
     if (n == max_numbers) die("too many");
-    i = read_int(skip_whitespace(i), &numbers[n]);
-    if (i == NULL) die("bad input");
+    i = read_int(i, &numbers[n]);
     if (numbers[n] > 2020) die("too large");
     set[numbers[n]] = 1;
     n++;
+    if (*i != '\n') die("bad");
+    i++;
   }
 }
 
