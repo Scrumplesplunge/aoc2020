@@ -12,10 +12,6 @@
 
 // System calls. We will only use three: read, write, and exit.
 
-// extern int read(int fd, const void* buffer, int size);
-// extern int write(int fd, const void* buffer, int size);
-// extern __attribute__((noreturn)) void exit(int code);
-
 static int read(int fd, const void* buffer, int size) {
   int result;
   asm volatile("int $0x80"
@@ -36,61 +32,4 @@ static int write(int fd, const void* buffer, int size) {
 
 static __attribute__((noreturn)) void exit(int code) {
   asm volatile("int $0x80" : : "a"(1), "b"(code));
-}
-
-struct timeval {
-  unsigned tv_sec;
-  unsigned tv_usec;
-};
-
-static int gettimeofday(struct timeval* restrict tp, void* restrict tzp) {
-  int result;
-  asm volatile("int $0x80"
-               : "=a"(result)
-               : "a"(78), "b"(tp), "c"(tzp)
-               : "memory");
-  return result;
-}
-
-// Utility functions from the standard library.
-
-static unsigned int strlen(const char* c_string) {
-  const char* i = c_string;
-  while (*i) i++;
-  return i - c_string;
-}
-
-static int strcmp(const char* l, const char* r) {
-  unsigned char lc, rc;
-  do {
-    lc = *l++, rc = *r++;
-    if (lc == '\0') return lc - rc;
-  } while (lc == rc);
-  return lc - rc;
-}
-
-static int strncmp(const char* l, const char* r, unsigned n) {
-  unsigned char lc = 0, rc = 0;
-  unsigned i = 0;
-  for (unsigned i = 0; i < n && lc == rc; i++) {
-    lc = *l++, rc = *r++;
-    if (lc == '\0') return lc - rc;
-  }
-  return lc - rc;
-}
-
-static void* memset(void* dest, int c, unsigned int n) {
-  unsigned char* o = dest;
-  unsigned char* const end = o + n;
-  while (o != end) *o++ = c;
-  return dest;
-}
-
-static void* memcpy(void* restrict dest, const void* restrict src,
-                    unsigned int n) {
-  char* o = dest;
-  char* const end = o + n;
-  const char* i = src;
-  while (o != end) *o++ = *i++;
-  return dest;
 }

@@ -1,5 +1,9 @@
 #include "util/die.h"
+#include "util/memcpy.h"
+#include "util/memset.h"
 #include "util/print_int.h"
+#include "util/strcmp.h"
+#include "util/strncmp.h"
 
 // Intern a string into a collection.
 enum { max_size = 16 };

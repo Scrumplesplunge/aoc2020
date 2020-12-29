@@ -1,4 +1,5 @@
 #include "util/die.h"
+#include "util/memset.h"
 #include "util/print_int.h"
 
 enum { size_x = 32, size_y = 32, size_z = 16, size_w = 16 };

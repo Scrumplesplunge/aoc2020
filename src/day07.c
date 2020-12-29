@@ -1,6 +1,8 @@
 #include "util/die.h"
+#include "util/memset.h"
 #include "util/print_int.h"
 #include "util/read_int.h"
+#include "util/strcmp.h"
 
 // Consume a prefix from a string (returning the position after the prefix), or
 // return NULL on failure.

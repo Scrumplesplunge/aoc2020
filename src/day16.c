@@ -1,6 +1,8 @@
 #include "util/die.h"
+#include "util/memset.h"
 #include "util/print_int64.h"
 #include "util/read_int16.h"
+#include "util/strncmp.h"
 
 struct range {
   unsigned short min, max;
@@ -177,13 +179,11 @@ int main() {
     i++;
   }
   i++;
-  i[12] = '\0';
-  if (strcmp(i, "your ticket:") != 0) die("syntax");
+  if (strncmp(i, "your ticket:\n", 13) != 0) die("syntax");
   i += 13;
   i = read_ticket(i, &tickets[num_tickets++]);
   i++;
-  i[15] = '\0';
-  if (strcmp(i, "nearby tickets:") != 0) die("syntax");
+  if (strncmp(i, "nearby tickets:\n", 16) != 0) die("syntax");
   i += 16;
   const char* const end = buffer + length;
   while (i != end) i = read_ticket(i, &tickets[num_tickets++]);

@@ -1,4 +1,5 @@
 #include "util/die.h"
+#include "util/memset.h"
 #include "util/print_int.h"
 #include "util/read_int.h"
 

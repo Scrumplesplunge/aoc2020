@@ -1,4 +1,5 @@
 #include "util/die.h"
+#include "util/memset.h"
 #include "util/print_int.h"
 
 enum { grid_size = 256, max_chain = grid_size / 2 - 101 };

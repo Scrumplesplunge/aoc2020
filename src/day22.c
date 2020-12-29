@@ -1,6 +1,8 @@
 #include "util/die.h"
+#include "util/memcpy.h"
 #include "util/print_int.h"
 #include "util/read_int8.h"
+#include "util/strncmp.h"
 
 enum { max_cards = 64 };
 struct hand {

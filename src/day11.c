@@ -1,4 +1,5 @@
 #include "util/die.h"
+#include "util/memcpy.h"
 #include "util/print_int.h"
 
 enum { max_size = 128 };

@@ -1,6 +1,9 @@
 #include "util/die.h"
+#include "util/memcpy.h"
+#include "util/memset.h"
 #include "util/print_int64.h"
 #include "util/read_int16.h"
+#include "util/strncmp.h"
 
 // Composable transformations:
 // +-one-+ +-rouf+ +-eno-+ +four-+ +eerht+ +-two-+ +three+ +-owt-+

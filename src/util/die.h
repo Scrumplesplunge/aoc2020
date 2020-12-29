@@ -1,5 +1,7 @@
 #pragma once
 
+#include "strlen.h"
+
 // Exit the program with an error message.
 __attribute__((noreturn)) static void die(const char* message) {
   write(STDERR_FILENO, message, strlen(message));
