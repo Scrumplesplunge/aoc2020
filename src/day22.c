@@ -119,11 +119,12 @@ static _Bool recursive_combat_round(struct circular_buffer* hands) {
   if (a_wins) {
     push_back(&hands[0], a);
     push_back(&hands[0], b);
+    return hands[1].size == 0;
   } else {
     push_back(&hands[1], b);
     push_back(&hands[1], a);
+    return hands[0].size == 0;
   }
-  return hands[0].size == 0 || hands[1].size == 0;
 }
 
 // Returns true if two circular buffers have the same contents.
