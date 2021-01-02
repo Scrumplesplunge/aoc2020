@@ -61,13 +61,13 @@ bin/opt bin/debug: | bin
 
 # The order of the dependencies here is very important: the linker script must
 # come first (to be the sole argument to -T).
-bin/opt/%: src/link.ld build/start.o build/opt/%.o | bin/opt
+bin/opt/%: src/link.ld build/opt/%.o | bin/opt
 	${LD} ${LDFLAGS} ${OPT_LDFLAGS} -T $^ -o $@
 	# GNU strip doesn't have the --strip-sections flag. This strips all of the
 	# sections from the output file, making the binaries smaller.
 	llvm-strip --strip-sections $@
 
-bin/debug/%: build/start.o build/debug/%.o | bin/debug
+bin/debug/%: build/debug/%.o | bin/debug
 	${LD} ${LDFLAGS} ${DEBUG_LDFLAGS} $^ -o $@
 
 bin/opt/day01.%.output: bin/opt/day01 puzzles/day01/%.input

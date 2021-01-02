@@ -33,3 +33,16 @@ static int write(int fd, const void* buffer, int size) {
 static __attribute__((noreturn)) void exit(int code) {
   asm volatile("int $0x80" : : "a"(1), "b"(code));
 }
+
+// Entry point. We will invoke main from _start.
+
+static int main();
+
+__attribute__((noreturn)) void _start() {
+  int argc;
+  char** argv;
+  asm volatile("pop %0\n"
+               "mov %%esp, %1"
+               : "=r"(argc), "=r"(argv));
+  exit(main(argc, argv));
+}
