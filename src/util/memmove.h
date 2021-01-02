@@ -1,5 +1,6 @@
 #pragma once
 
+// Copy n bytes from src to dest. The src and dest regions may overlap.
 static void* memmove(void* dest, const void* src,
                     unsigned int n) {
   if (dest < src) {

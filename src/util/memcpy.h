@@ -1,5 +1,7 @@
 #pragma once
 
+// Copy n bytes from src to dest. Return dest. The src and dest regions must not
+// overlap.
 static void* memcpy(void* restrict dest, const void* restrict src,
                     unsigned int n) {
   char* o = dest;

@@ -5,6 +5,7 @@
 // functions that cannot be removed due to subsequent linker errors.
 #pragma GCC system_header
 
+// Fill n bytes of memory starting at dest with copies of c.
 static void* memset(void* dest, int c, unsigned int n) {
   unsigned char* o = dest;
   unsigned char* const end = o + n;

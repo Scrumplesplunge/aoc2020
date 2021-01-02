@@ -1,7 +1,11 @@
 #pragma once
 
+// System call for getting timing information.
+
 struct timeval {
+  // Current time in seconds.
   unsigned tv_sec;
+  // Microseconds.
   unsigned tv_usec;
 };
 
