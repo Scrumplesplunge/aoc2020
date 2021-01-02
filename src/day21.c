@@ -21,8 +21,9 @@ static unsigned char intern(const char* value, char (*values)[max_size],
 }
 
 enum { max_allergens = 16, max_ingredients = 256 };
-char allergens[max_allergens][max_size], ingredients[max_ingredients][max_size];
-int num_allergens, num_ingredients;
+static char allergens[max_allergens][max_size];
+static char ingredients[max_ingredients][max_size];
+static int num_allergens, num_ingredients;
 
 enum { max_foods = 128 };
 struct food {
@@ -30,8 +31,8 @@ struct food {
   unsigned char ingredients[max_ingredients];
   unsigned char allergens[max_allergens];
 };
-struct food foods[max_foods];
-int num_foods;
+static struct food foods[max_foods];
+static int num_foods;
 
 static void read_input() {
   char buffer[65536];
@@ -73,7 +74,7 @@ static void read_input() {
 
 enum { set_size = (max_ingredients + 31) / 32 };
 // candidates[i] is the set of ingredients that might contain allergen i.
-unsigned candidates[max_allergens][set_size];
+static unsigned candidates[max_allergens][set_size];
 
 static int part1() {
   memset(candidates, 0xFF, sizeof(candidates));

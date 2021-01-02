@@ -14,16 +14,16 @@ struct field {
 };
 
 enum { max_fields = 20 };
-struct field fields[max_fields];
-int num_fields;
+static struct field fields[max_fields];
+static int num_fields;
 
 struct ticket {
   unsigned short values[max_fields];
 };
 
 enum { max_tickets = 512 };
-struct ticket tickets[max_tickets];
-int num_tickets;
+static struct ticket tickets[max_tickets];
+static int num_tickets;
 
 // Read a ticket into the given struct. Returns a pointer to the address
 // immediately after the ticket in the input. Dies if the ticket is invalid.
@@ -75,13 +75,13 @@ static int part1() {
 }
 
 // valid_pairs[i][f] is false if index i cannot possibly represent field f.
-_Bool valid_pairs[max_fields][max_fields];
+static _Bool valid_pairs[max_fields][max_fields];
 
 // Given a partial assignment result[0..num_fields) with -1 for unassigned
 // fields, and a set of taken indices where taken[i] is true if result already
 // has a field assigned to i, returns the field index of the least ambiguous
 // field.
-int least_ambiguous(const signed char* result, _Bool* taken) {
+static int least_ambiguous(const signed char* result, _Bool* taken) {
   // Check for one field that is unambiguous.
   int ambiguity = num_fields + 1;
   int field = -1;

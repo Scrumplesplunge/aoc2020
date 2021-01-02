@@ -3,7 +3,7 @@
 #include "util/print_int.h"
 #include "util/read_int.h"
 
-unsigned spoken[30000001];
+static unsigned spoken[30000001];
 int main() {
   char buffer[128];
   const int length = read(STDIN_FILENO, buffer, sizeof(buffer));

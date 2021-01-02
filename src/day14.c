@@ -89,7 +89,7 @@ struct slot {
 };
 enum { max_slots = 1 << 20, slot_map_size = 1 << 16 };
 static struct slot slots[max_slots];
-int num_slots;
+static int num_slots;
 static struct slot* slot_map[slot_map_size];
 
 static unsigned bucket(unsigned long long address) {

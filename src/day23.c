@@ -44,7 +44,7 @@ static void part1(const char* input) {
   write(STDOUT_FILENO, out, 9);
 }
 
-struct node nodes[1000000];
+static struct node nodes[1000000];
 static void part2(const char* input) {
   struct node* first;
   struct node** previous = &first;

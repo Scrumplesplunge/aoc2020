@@ -3,8 +3,8 @@
 #include "util/print_int.h"
 
 enum { size_x = 32, size_y = 32, size_z = 16, size_w = 16 };
-_Bool part1_cells[2][size_z][size_y][size_x];
-unsigned char part2_cells[2][size_w][size_z][size_y][size_x];
+static _Bool part1_cells[2][size_z][size_y][size_x];
+static unsigned char part2_cells[2][size_w][size_z][size_y][size_x];
 
 static void read_input() {
   char buffer[256];

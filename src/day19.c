@@ -18,10 +18,10 @@ struct rule {
   };
 };
 
-char buffer[32768];
-struct rule rules[max_rules];
-const char* messages[max_messages];
-int num_messages;
+static char buffer[32768];
+static struct rule rules[max_rules];
+static const char* messages[max_messages];
+static int num_messages;
 
 static void read_input() {
   const int length = read(STDIN_FILENO, buffer, sizeof(buffer));

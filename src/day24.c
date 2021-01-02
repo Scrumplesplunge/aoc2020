@@ -5,7 +5,7 @@
 enum { grid_size = 256, max_chain = grid_size / 2 - 101 };
 enum direction { e, se, sw, w, nw, ne, done, flip };
 
-unsigned char steps[32768];
+static unsigned char steps[32768];
 
 static void read_input() {
   char buffer[32768];

@@ -9,7 +9,7 @@ struct hand {
   unsigned char cards[max_cards];
   int num_cards;
 };
-struct hand input_hands[2];
+static struct hand input_hands[2];
 
 static void read_input() {
   char buffer[1024];

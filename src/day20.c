@@ -32,8 +32,8 @@ struct tile {
 };
 
 enum { max_tiles = 256 };
-struct tile tiles[max_tiles];
-int num_tiles;
+static struct tile tiles[max_tiles];
+static int num_tiles;
 
 // Reverse the bits in an unsigned short.
 static unsigned short reverse(unsigned short x) {
@@ -243,9 +243,9 @@ static struct oriented_tile next_down(struct oriented_tile input) {
 
 enum { monster_width = 20, monster_height = 3 };
 
-unsigned char transformed_grid[8 * grid_size][grid_size];
+static unsigned char transformed_grid[8 * grid_size][grid_size];
 
-unsigned find_sea_monsters(int size) {
+static unsigned find_sea_monsters(int size) {
   //                   #     00000000 00000000 00100000    0x00 0x00 0x20
   // #    ##    ##    ### -> 10000110 00011000 01110000 -> 0x86 0x18 0x70
   //  #  #  #  #  #  #       01001001 00100100 10000000    0x49 0x24 0x80
