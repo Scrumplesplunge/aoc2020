@@ -1,6 +1,7 @@
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/memset.h"
+#include "util/popcount.h"
 #include "util/print_int.h"
 #include "util/strcmp.h"
 #include "util/strncmp.h"
@@ -125,15 +126,7 @@ static int part1() {
 
 static int possible_ingredients(const unsigned* set) {
   int count = 0;
-  for (int i = 0; i < set_size; i++) {
-    unsigned c = set[i];
-    c = (c & 0x55555555) + ((c >> 1) & 0x55555555);
-    c = (c & 0x33333333) + ((c >> 2) & 0x33333333);
-    c = (c & 0x0F0F0F0F) + ((c >> 4) & 0x0F0F0F0F);
-    c = (c & 0x00FF00FF) + ((c >> 8) & 0x00FF00FF);
-    c = (c & 0x0000FFFF) + ((c >> 16) & 0x0000FFFF);
-    count += c;
-  }
+  for (int i = 0; i < set_size; i++) count += popcount(set[i]);
   return count;
 }
 
