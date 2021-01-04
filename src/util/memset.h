@@ -6,7 +6,7 @@
 #pragma GCC system_header
 
 // Fill n bytes of memory starting at dest with copies of c.
-static void* memset(void* dest, int c, unsigned int n) {
+static void* memset(void* dest, int c, size_t n) {
   unsigned char* o = dest;
   unsigned char* const end = o + n;
   while (o != end) *o++ = c;

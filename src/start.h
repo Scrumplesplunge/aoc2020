@@ -5,15 +5,18 @@
 // statics, as well as for noreturn functions which GCC thinks can return.
 #pragma GCC system_header
 
-#define STDIN_FILENO 0
-#define STDOUT_FILENO 1
-#define STDERR_FILENO 2
+#define STDIN_FILENO 0u
+#define STDOUT_FILENO 1u
+#define STDERR_FILENO 2u
 #define NULL ((void*)0)
+
+typedef unsigned int size_t;
+typedef int ssize_t;
 
 // System calls. We will only use three: read, write, and exit.
 
-static int read(int fd, const void* buffer, int size) {
-  int result;
+static ssize_t read(unsigned int fd, const void* buffer, size_t size) {
+  ssize_t result;
   asm volatile("int $0x80"
                : "=a"(result)
                : "a"(3), "b"(fd), "c"(buffer), "d"(size)
@@ -21,8 +24,8 @@ static int read(int fd, const void* buffer, int size) {
   return result;
 }
 
-static int write(int fd, const void* buffer, int size) {
-  int result;
+static ssize_t write(unsigned int fd, const void* buffer, size_t size) {
+  ssize_t result;
   asm volatile("int $0x80"
                : "=a"(result)
                : "a"(4), "b"(fd), "c"(buffer), "d"(size)
