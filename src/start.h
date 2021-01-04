@@ -10,31 +10,31 @@
 #define STDERR_FILENO 2u
 #define NULL ((void*)0)
 
-typedef unsigned int size_t;
-typedef int ssize_t;
+typedef unsigned long size_t;
+typedef long ssize_t;
 
 // System calls. We will only use three: read, write, and exit.
 
 static ssize_t read(unsigned int fd, const void* buffer, size_t size) {
   ssize_t result;
-  asm volatile("int $0x80"
+  asm volatile("syscall"
                : "=a"(result)
-               : "a"(3), "b"(fd), "c"(buffer), "d"(size)
-               : "memory");
+               : "a"(0), "D"(fd), "S"(buffer), "d"(size)
+               : "cc", "rcx", "r11", "memory");
   return result;
 }
 
 static ssize_t write(unsigned int fd, const void* buffer, size_t size) {
   ssize_t result;
-  asm volatile("int $0x80"
+  asm volatile("syscall"
                : "=a"(result)
-               : "a"(4), "b"(fd), "c"(buffer), "d"(size)
-               : "memory");
+               : "a"(1), "D"(fd), "S"(buffer), "d"(size)
+               : "cc", "rcx", "r11", "memory");
   return result;
 }
 
 static __attribute__((noreturn)) void exit(int code) {
-  asm volatile("int $0x80" : : "a"(1), "b"(code));
+  asm volatile("syscall" : : "a"(60), "D"((long)code));
 }
 
 // Entry point. We will invoke main from _start.
