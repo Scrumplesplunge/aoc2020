@@ -93,17 +93,6 @@ static int part1() {
       }
     }
   }
-  // Debug output.
-  // for (int i = 0; i < num_allergens; i++) {
-  //   write(STDOUT_FILENO, allergens[i], strlen(allergens[i]));
-  //   for (int j = 0; j < num_ingredients; j++) {
-  //     if (candidates[i][j / 32] & (1 << (j % 32))) {
-  //       write(STDOUT_FILENO, " ", 1);
-  //       write(STDOUT_FILENO, ingredients[j], strlen(ingredients[j]));
-  //     }
-  //   }
-  //   write(STDOUT_FILENO, "\n", 1);
-  // }
   unsigned ingredient_set[set_size];
   memset(ingredient_set, 0, sizeof(ingredient_set));
   for (int i = 0; i < num_allergens; i++) {
