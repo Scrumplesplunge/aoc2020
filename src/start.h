@@ -41,6 +41,7 @@ static __attribute__((noreturn)) void exit(int code) {
 
 static int main();
 
+__attribute__((force_align_arg_pointer))
 __attribute__((noreturn)) void _start() {
   int argc;
   char** argv;
