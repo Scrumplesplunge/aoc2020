@@ -43,10 +43,8 @@ static int main();
 
 __attribute__((force_align_arg_pointer))
 __attribute__((noreturn)) void _start() {
-  int argc;
-  char** argv;
-  asm volatile("pop %0\n"
-               "mov %%esp, %1"
-               : "=r"(argc), "=r"(argv));
-  exit(main(argc, argv));
+  // Upon ELF entry, the top of the stack is argc, argv[0], argv[1], etc.
+  // However, we can't easily access that from here since the compiler may
+  // or may not insert function prelude that adjusts the stack pointer.
+  exit(main());
 }
