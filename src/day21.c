@@ -4,6 +4,7 @@
 #include "util/popcount.h"
 #include "util/print_int.h"
 #include "util/strcmp.h"
+#include "util/strlen.h"
 #include "util/strncmp.h"
 
 // Intern a string into a collection.

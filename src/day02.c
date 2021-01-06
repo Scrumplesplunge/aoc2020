@@ -1,6 +1,7 @@
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"
+#include "util/strlen.h"
 
 static char buffer[65536];
 
