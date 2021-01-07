@@ -1,3 +1,30 @@
+// Input: 7^x mod 20201227 and 7^y mod 20201227 for unknown x and y.
+// Part 1: Find 7^xy mod 20201227.
+//
+// Approach: We can use the modular log operation to compute y and then use the
+// identity (7^x)^y = 7^xy to find the desired result.
+//
+// 7^y * 7^((20201227 - 1 - k) * j) = 7^i
+// 7^y = 7^(k * j + i)
+//
+// The naive approach to compute mod_log would be to iterate over all possible
+// values for y until we find one which matches the input. However, we can do
+// better by observing that 7^(20201227 - 1) mod 20201227 = 1. Taking
+// k=sqrt(20201227), we can decompose y as y = k * j + i for some j and i. Then,
+// mod 20201227:
+//
+// 7^y = 7^(k * j + i) = 7^kj * 7^i
+// 7^y * 7^((20201227 - 1 - k) * j) = 7^((20201227 - 1 - k) * j) * 7^kj * 7^i
+//                                  = 7^((20201227 - 1 - k + k) * j) * 7^i
+//                                  = 1^j * 7^i
+//                                  = 7^i
+//
+// Thus, if we can find i and j such that this equality holds, we will have
+// found y. We can build a lookup table containing 7^i for all i in 0..k, and
+// then for each j in 0..k we can check if 7^((20201227 - 1 - k) * j) is in the
+// lookup table. The total time to build the lookup table and search through it
+// is O(k log k).
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"

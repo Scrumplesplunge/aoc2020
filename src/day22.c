@@ -1,3 +1,37 @@
+// Input: The cards in each of two player hands.
+// Part 1: Find the score of the winning player in a game of Combat.
+// A game of Combat proceeds as follows:
+//   Each player turns over their top card. The player with the higher value
+//   wins the round. The winner receives both cards and places them on the
+//   bottom of their own pile such that the winner's card is above the loser's
+//   card. Play proceeds until one player holds every card, at which point they
+//   win. Their score is computed by multiplying each card by its position in
+//   the hand (starting at 1 for the bottom card) and taking the sum.
+// Part 2: Find the score of the winning player in a game of Recursive Combat.
+// A game of Recursive Combat proceeds as follows:
+//   If the two players' hands are exactly the same as they have been at an
+//   earlier point in the same game, player 1 wins. Otherwise, each player draws
+//   and plays their top card. If either player has fewer cards than the value
+//   of the card they just played, then the winner of the round is the one with
+//   the higher valued card. Otherwise, each player copies a subset of their
+//   deck of cards equal in size to the value of the card they played, and a new
+//   game of Recursive Combat is played to determine the winner of the round.
+//   The winner of that game wins the round. Upon winning a round, the winner
+//   takes both cards (as they do in Combat). The game continues until one
+//   player holds all the cards.
+//
+// Approach: part 1 is straightforward: we simulate the game one turn at a time
+// until it naturally concludes. For part 2, we have the additional constraint
+// that we need to identify hands that we have seen before. To do this in
+// a memory-efficient manner, we will simulate two copies of the game alongside
+// each other and use the "tortoise and the hare" trick to detect any cycles. If
+// the hare terminates, we don't have a cycle and proceed as described above.
+// Otherwise, the tortoise hands and the hare hands will eventually match and we
+// will exit with a win for player 1. This technique has a single drawback: it
+// will not necessarily detect the cycle right at the start. This doesn't matter
+// unless the outermost game terminates due to a cycle, so we will assume that
+// this is impossible.
+
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/print_int.h"

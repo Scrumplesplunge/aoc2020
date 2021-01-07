@@ -1,3 +1,21 @@
+// Input: a permutation of the number 1-9.
+// A game of crab cups is played using a circle of labelled cups and one cup
+// identified as the current cup. In each move, the three cups clockwise of the
+// current cup are removed and inserted immediately after the cup with the label
+// equal to the current cup's label minus one. The new current cup is then the
+// next cup clockwise of the current cup.
+// Part 1: Using the 9 input cups as the circle, find the sequence of cups
+// following cup 1 after 100 moves.
+// Part 2: Using the 9 input cups, followed by all of the cups 10-1000000 in
+// order, find the two cups following cup 1 after 10000000 moves and return the
+// product of their labels.
+//
+// Approach: We'll use a circular linked list to represent the circle of cups.
+// This makes the insertions and deletions efficient. To make the destination
+// lookup efficient, the linked list nodes will be stored in an array indexed by
+// cup label. Since the position encodes the label, the nodes only need to store
+// the pointer to the next node.
+
 #include "util/die.h"
 #include "util/print_int64.h"
 

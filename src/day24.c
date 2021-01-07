@@ -1,3 +1,31 @@
+// Input: sequences of directions, one sequence per line. Each sequence consists
+// of {e, se, sw, w, ne, nw}, with no delimiters, representing each of the six
+// directions which are adjacent to any hexagonal tile. Each tile has a black
+// side and a white side, and all tiles initially have the white side face up.
+// Part 1: Follow each sequence of directions and flip over the tile at the
+// final position. Find the total number of tiles which are left with the black
+// side face up.
+// Part 2: Every day, tiles are updated according to the following rules:
+//   * Unless a black tile has exactly one adjacent black tile, it is flipped to
+//     white.
+//   * If a white tile has exactly two adjacent black tiles, it is flipped to
+//     black.
+// Find the number of tiles with the black side facing upwards after 100 days.
+//
+// Approach: the hexagonal grid can be mapped to a square grid to make it easier
+// to represent in a multidimensional array:
+//      __             +--+--+      +--+--+
+//   __/ W\__  skew    | W|SW| turn |NE|NW|
+//  /NW\__/SW\      +--+--+--+      +--+--+--+
+//  \__/  \__/  ->  |NW|  |SE|  ->  | E|  | W|
+//  /NE\__/SE\      +--+--+--+      +--+--+--+
+//  \__/ E\__/      |NE| E|            |SE|SW|
+//     \__/         +--+--+            +--+--+
+// With that in mind, it is trivial to solve both part 1 and part 2 by working
+// on the square grid. By restricting the maximum length of an input sequence,
+// we can use a grid which is big enough that we will never hit the edges and
+// can focus only on the easy cases.
+
 #include "util/die.h"
 #include "util/memset.h"
 #include "util/print_int.h"

@@ -1,3 +1,29 @@
+// Input: ingredients lists for each food, as well as a list of allergens that
+// those foods definitely contain. A food may still contain an unlisted
+// allergen. A given allergen is contained by exactly one ingredient.
+// Part 1: Find all ingredients that cannot possibly contain any of the listed
+// allergens, and return the total number of times that any of these ingredients
+// appear.
+// Part 2: Find the ingredient for each allergen and list them alphabetically by
+// their allergen name.
+//
+// Approach: we will use string interning to turn the names into integers for
+// easier processing.
+//
+// For part 1, we know that an ingredient cannot contain an allergen if it does
+// not appear in every food that lists that allergen. We can compute a table of
+// candidates such that candidates[i][j] is false if ingredient j cannot
+// possibly contain allergen i. However, to make this table smaller, we will use
+// a single bit per bool instead of a whole byte.
+//
+// For part 2, we will iteratively identify the ingredients for each allergen by
+// eliminating candidates that would conflict with a pair which we have already
+// identified. At least one pair must be unambiguous in each iteration for this
+// to work, but this is true of the inputs we are given. We can then eliminate
+// that ingredient from each allergen's candidates and check if we have now made
+// another allergen unambiguous, and loop until we have found an assignment for
+// all allergens.
+
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/memset.h"
