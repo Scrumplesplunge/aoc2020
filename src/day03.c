@@ -1,3 +1,14 @@
+// Input: A rectangular map depicting a pattern of open space (.) and trees (#)
+// that repeats horizontally.
+// Part 1: Travelling with a step of (3, 1), count the number of trees that
+// would be encountered before reaching the bottom edge of the map.
+// Part 2: For each of (1, 1), (3, 1), (5, 1), (7, 1), (1, 2), repeat the
+// process and find the product of the tree counts from each one.
+//
+// Approach: we can treat the X axis as (mod width) and solve the puzzle without
+// copying the pattern out multiple times. The processing requires a single pass
+// for each gradient and runs in time proportional to the height of the grid.
+
 #include "util/die.h"
 #include "util/print_int64.h"
 

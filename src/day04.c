@@ -1,3 +1,25 @@
+// Input: A collection of multi-line passports separated by blank lines. Each
+// passport consists of a number of key:value pairs, where the keys are a subset
+// of {byr, iyr, eyr, hgt, hcl, ecl, pid, cid}.
+// Part 1: Find the number of passports which have all fields except,
+// optionally, cid.
+// Part 2: Each field has validation rules:
+//   byr: a 4-digit number between 1920 and 2002.
+//   iyr: a 4-digit number between 2010 and 2020.
+//   eyr: a 4-digit number between 2020 and 2030.
+//   hgt: a number followed by a unit: 150cm-193cm, 59in-76in.
+//   hcl: a hex colour: # followed by 6 hex digits.
+//   ecl: one of {amb, blu, brn, gry, grn, hzl, oth}.
+//   pid: a 9-digit number, optionally including leading zeroes.
+// Find the number of passports which are both valid for part 1 and valid
+// according to these additional rules.
+//
+// Approach: solve part 1 and part 2 in the same pass. This avoids having to
+// model passports in some data structure. However, we will have a data
+// structure for individual passport entries to simplify the logic.
+// Additionally, we will map keys to integers to allow us to use switch
+// statements.
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"

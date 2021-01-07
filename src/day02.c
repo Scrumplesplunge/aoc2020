@@ -1,3 +1,14 @@
+// Input: A list of records of the form <low>-<high> <char>: <password>, where
+// low < high, char is a single lowercase character, and password is a sequence
+// of lowercase characters.
+// Part 1: A password is valid if char appears low-high times. Find the number
+// of valid passwords.
+// Part 2: A password is valid if char appears at exactly one of the two offsets
+// low and high. Find the number of valid passwords.
+//
+// Approach: parse the input into an array of structs for easy processing. Then,
+// the processing is pretty mechanical with no clever tricks.
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"

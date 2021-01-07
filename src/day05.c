@@ -1,3 +1,24 @@
+// Input: A list of boarding passes consisting of 10 uppercase letters. The
+// first 7 identify the row ('B' for back half, 'F' for front half), while the
+// last 3 identify the column ('L' for left half, 'R' for right half). Each
+// letter recursively denotes which half the seat is in.
+// Part 1: Rows are numbered 0-127, columns are numbered 0-7. The ID of a seat
+// is its row * 8 plus its column. Find the highest seat ID on a boarding pass.
+// Part 2: Some rows at the front and back of the plane have no seats, and the
+// front-most and back-most rows may have missing seats. You know that you are
+// not sat in the front or back rows, and that all seats in the flight are
+// booked. Your seat is the only seat that is not taken by any ticket. Find your
+// seat ID.
+//
+// Approach: First, we can observe that if we replace 'B' and 'R' with '1', and
+// replace 'F' and 'L' with '0', then a boarding pass spells out its own seat ID
+// in binary. Thus, we can trivially parse a boarding pass into a seat ID. While
+// parsing this, we will discover the maximum seat ID. For part 2, the only
+// thing we are interested in is the existence of each ID, so we can represent
+// every possible seat with a 128-byte bitset (where a byte is a row of the
+// plane), look for a byte which is not 0xFF to find our row, and deduce our
+// column from the missing bit.
+
 #include "util/die.h"
 #include "util/print_int.h"
 
