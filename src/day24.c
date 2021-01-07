@@ -107,7 +107,7 @@ static int part2() {
   const int begin = grid_size + 1;
   const int end = grid_size * grid_size - grid_size - 1;
   for (int day = 0; day < 100; day++) {
-    const _Bool parity = day % 2;
+    const bool parity = day % 2;
     unsigned char *input = grid[parity];
     unsigned char *output = grid[1 - parity];
     memset(output, 0, sizeof(grid[parity]));
@@ -115,7 +115,7 @@ static int part2() {
       for (int j = begin; j < end; j++) output[j] += input[j + step[i]];
     }
     for (int i = begin; i < end; i++) {
-      const _Bool active = input[i];
+      const bool active = input[i];
       const unsigned char neighbours = output[i];
       if (active) {
         output[i] = neighbours == 1 || neighbours == 2;

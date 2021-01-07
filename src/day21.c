@@ -57,11 +57,11 @@ static void read_input() {
     }
     if (strncmp(i, "(contains ", 10) != 0) die("syntax");
     i += 10;
-    while (1) {
+    while (true) {
       if (f->num_allergens == max_allergens) die("too many allergens");
       const char* allergen_name = i;
       while (*i != ',' && *i != ')') i++;
-      const _Bool done = *i == ')';
+      const bool done = *i == ')';
       if (!done && strncmp(i, ", ", 2) != 0) die("syntax");
       *i++ = '\0';
       f->allergens[f->num_allergens++] = intern(
@@ -106,7 +106,7 @@ static int part1() {
     const struct food* f = &foods[i];
     for (int j = 0; j < f->num_ingredients; j++) {
       const unsigned char ingredient = f->ingredients[j];
-      const _Bool can_have_allergen =
+      const bool can_have_allergen =
           ingredient_set[ingredient / 32] & (1 << (ingredient % 32));
       count += !can_have_allergen;
     }
@@ -130,9 +130,9 @@ static unsigned char get_ingredient(const unsigned* set) {
 }
 
 static void part2() {
-  _Bool changed = 1;
+  bool changed = true;
   while (changed) {
-    changed = 0;
+    changed = false;
     // Find an allergen which is now uniquely identified.
     for (int i = 0; i < num_allergens; i++) {
       const unsigned* const row = candidates[i];
@@ -174,7 +174,7 @@ static void part2() {
   char buffer[(max_size + 1) * max_allergens];
   char* o = buffer;
   int i = 0;
-  while (1) {
+  while (true) {
     const char* name = ingredients[dangerous[sorted_allergens[i++]]];
     const int length = strlen(name);
     memcpy(o, name, length);

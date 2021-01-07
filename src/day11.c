@@ -58,11 +58,11 @@ static struct grid buffers[2];
 static int find_seated(int comfort_threshold,
                        int (*adjacent)(const struct grid*, int, int)) {
   memcpy(&buffers[0], &input, sizeof(input));
-  _Bool changed = 1;
+  bool changed = true;
   // Iterate until the state does not change.
   for (int round = 0; changed; round++) {
-    changed = 0;
-    const _Bool parity = round % 2;
+    changed = false;
+    const bool parity = round % 2;
     const struct grid* source = &buffers[parity];
     struct grid* const destination = &buffers[1 - parity];
     for (int y = 1; y < grid_height; y++) {
@@ -70,10 +70,10 @@ static int find_seated(int comfort_threshold,
         const int a = adjacent(source, x, y);
         const char cell = source->cells[y][x];
         if (cell == seat && a == 0) {
-          changed = 1;
+          changed = true;
           destination->cells[y][x] = person;
         } else if (cell == person && a >= comfort_threshold) {
-          changed = 1;
+          changed = true;
           destination->cells[y][x] = seat;
         } else {
           destination->cells[y][x] = source->cells[y][x];

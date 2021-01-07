@@ -29,7 +29,7 @@ static int num_tickets;
 // immediately after the ticket in the input. Dies if the ticket is invalid.
 static char* read_ticket(char* i, struct ticket* t) {
   int num_values = 0;
-  while (1) {
+  while (true) {
     if (num_values == num_fields) die("too many values");
     i = (char*)read_int16(i, &t->values[num_values++]);
     if (*i != ',') break;
@@ -40,13 +40,13 @@ static char* read_ticket(char* i, struct ticket* t) {
 }
 
 // Returns true if the x is a valid value for field f.
-static _Bool valid(struct field* f, int x) {
+static bool valid(struct field* f, int x) {
   return (f->ranges[0].min <= x && x <= f->ranges[0].max) ||
          (f->ranges[1].min <= x && x <= f->ranges[1].max);
 }
 
 // Returns true if x is an invalid value for all fields.
-static _Bool invalid_value(int x) {
+static bool invalid_value(int x) {
   int valid_fields = 0;
   for (int j = 0; j < num_fields; j++) {
     if (valid(&fields[j], x)) valid_fields++;
@@ -55,11 +55,11 @@ static _Bool invalid_value(int x) {
 }
 
 // Returns true if t is not a valid ticket.
-static _Bool invalid_ticket(struct ticket* t) {
+static bool invalid_ticket(struct ticket* t) {
   for (int i = 0; i < num_fields; i++) {
-    if (invalid_value(t->values[i])) return 1;
+    if (invalid_value(t->values[i])) return true;
   }
-  return 0;
+  return false;
 }
 
 static int part1() {
@@ -75,13 +75,13 @@ static int part1() {
 }
 
 // valid_pairs[i][f] is false if index i cannot possibly represent field f.
-static _Bool valid_pairs[max_fields][max_fields];
+static bool valid_pairs[max_fields][max_fields];
 
 // Given a partial assignment result[0..num_fields) with -1 for unassigned
 // fields, and a set of taken indices where taken[i] is true if result already
 // has a field assigned to i, returns the field index of the least ambiguous
 // field.
-static int least_ambiguous(const signed char* result, _Bool* taken) {
+static int least_ambiguous(const signed char* result, bool* taken) {
   // Check for one field that is unambiguous.
   int ambiguity = num_fields + 1;
   int field = -1;
@@ -104,27 +104,27 @@ static int least_ambiguous(const signed char* result, _Bool* taken) {
 // fields, finds an assignment for the unassigned fields such that all the
 // validity constraints in `valid_pairs` are satisfied. Returns true if
 // successful, or false if no such assignment can be found.
-static _Bool deduce_fields(signed char* result) {
-  _Bool taken[max_fields] = {0};
-  _Bool all_taken = 1;
+static bool deduce_fields(signed char* result) {
+  bool taken[max_fields] = {0};
+  bool all_taken = true;
   for (int f = 0; f < num_fields; f++) {
     if (result[f] != -1) {
-      taken[result[f]] = 1;
+      taken[result[f]] = true;
     } else {
-      all_taken = 0;
+      all_taken = false;
     }
   }
-  if (all_taken) return 1;  // All fields have been assigned, we are done.
+  if (all_taken) return true;  // All fields have been assigned, we are done.
   // Find the least ambiguous field and try each possible assignment for it.
   const int f = least_ambiguous(result, taken);
-  if (f == -1) return 0;
+  if (f == -1) return false;
   for (int i = 0; i < num_fields; i++) {
     if (valid_pairs[i][f] && !taken[i]) {
       result[f] = i;
-      if (deduce_fields(result)) return 1;
+      if (deduce_fields(result)) return true;
     }
   }
-  return 0;
+  return false;
 }
 
 static unsigned long long part2() {
@@ -161,7 +161,7 @@ int main() {
   if (length <= 0) die("read");
   if (buffer[length - 1] != '\n') die("newline");
   char* i = buffer;
-  while (1) {
+  while (true) {
     if (*i == '\n') break;
     if (num_fields == max_fields) die("too many fields");
     struct field* f = &fields[num_fields++];

@@ -7,7 +7,7 @@ static unsigned char seats[128] = {0};
 
 int main() {
   int max_id = 0;
-  while (1) {
+  while (true) {
     char code[11];
     const int len = read(STDIN_FILENO, code, 11);
     if (len == 0) break;

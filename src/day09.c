@@ -33,14 +33,14 @@ static void read_input() {
   if (num_numbers < prelude_size) die("too small");
 }
 
-static _Bool has_sum(unsigned long long window[25],
+static bool has_sum(unsigned long long window[25],
                      unsigned long long value) {
   for (int i = 0; i < prelude_size; i++) {
     for (int j = i + 1; j < prelude_size; j++) {
-      if (value == window[i] + window[j]) return 1;
+      if (value == window[i] + window[j]) return true;
     }
   }
-  return 0;
+  return false;
 }
 
 static unsigned long long part1() {
@@ -60,7 +60,7 @@ static unsigned long long part1() {
 static unsigned long long part2(unsigned long long key) {
   unsigned long long sum = 0;
   int first = 0, last = 0;
-  while (1) {
+  while (true) {
     if (sum == key) break;
     if (sum < key) {
       if (last == num_numbers) die("not found");

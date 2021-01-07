@@ -3,11 +3,11 @@
 #include "util/read_int.h"
 #include "util/is_lower.h"
 
-static _Bool is_whitespace(char c) {
+static bool is_whitespace(char c) {
   return c == ' ' || c == '\n';
 }
 
-static _Bool is_hex(char c) {
+static bool is_hex(char c) {
   return is_digit(c) || ('a' <= c && c <= 'f');
 }
 
@@ -56,40 +56,40 @@ static char* read_entry(char* i, struct entry* out) {
 
 static char buffer[32768];
 
-static _Bool check_year(struct entry* e, unsigned min, unsigned max) {
-  if (e->value_length != 4) return 0;
+static bool check_year(struct entry* e, unsigned min, unsigned max) {
+  if (e->value_length != 4) return false;
   unsigned value;
-  if (read_int(e->value, &value) != e->value + 4) return 0;
+  if (read_int(e->value, &value) != e->value + 4) return false;
   return min <= value && value <= max;
 }
 
-static _Bool check_height(struct entry* e) {
-  if (e->value_length < 3) return 0;
+static bool check_height(struct entry* e) {
+  if (e->value_length < 3) return false;
   const char* const unit = e->value + e->value_length - 2;
-  const _Bool is_cm = unit[0] == 'c' && unit[1] == 'm';
-  const _Bool is_in = unit[0] == 'i' && unit[1] == 'n';
+  const bool is_cm = unit[0] == 'c' && unit[1] == 'm';
+  const bool is_in = unit[0] == 'i' && unit[1] == 'n';
   unsigned value;
-  if (read_int(e->value, &value) != unit) return 0;
+  if (read_int(e->value, &value) != unit) return false;
   if (is_cm) {
     return 150 <= value && value <= 193;
   } else if (is_in) {
     return 59 <= value && value <= 76;
   } else {
-    return 0;
+    return false;
   }
 }
 
-static _Bool check_hair(struct entry* e) {
-  if (e->value_length != 7) return 0;
-  if (e->value[0] != '#') return 0;
+static bool check_hair(struct entry* e) {
+  if (e->value_length != 7) return false;
+  if (e->value[0] != '#') return false;
   for (int i = 1; i < 7; i++) {
-    if (!is_hex(e->value[i])) return 0;
+    if (!is_hex(e->value[i])) return false;
   }
-  return 1;
+  return true;
 }
 
-static _Bool check_eyes(struct entry* e) {
-  if (e->value_length != 3) return 0;
+static bool check_eyes(struct entry* e) {
+  if (e->value_length != 3) return false;
   switch (KEY(e->value)) {
     case KEY3('a', 'm', 'b'):
     case KEY3('b', 'l', 'u'):
@@ -98,19 +98,19 @@ static _Bool check_eyes(struct entry* e) {
     case KEY3('g', 'r', 'n'):
     case KEY3('h', 'z', 'l'):
     case KEY3('o', 't', 'h'):
-      return 1;
+      return true;
     default:
-      return 0;
+      return false;
   }
 }
 
-static _Bool check_pid(struct entry* e) {
-  if (e->value_length != 9) return 0;
+static bool check_pid(struct entry* e) {
+  if (e->value_length != 9) return false;
   unsigned x;
   return read_int(e->value, &x) == e->value + 9;
 }
 
-static _Bool part2_valid(struct entry* e) {
+static bool part2_valid(struct entry* e) {
   switch (e->key) {
     case byr: return check_year(e, 1920, 2002);
     case iyr: return check_year(e, 2010, 2020);
@@ -119,8 +119,8 @@ static _Bool part2_valid(struct entry* e) {
     case hcl: return check_hair(e);
     case ecl: return check_eyes(e);
     case pid: return check_pid(e);
-    case cid: return 0;
-    default: return 0;
+    case cid: return false;
+    default: return false;
   }
 }
 

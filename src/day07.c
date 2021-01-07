@@ -83,14 +83,14 @@ static struct node* parents[max_styles];
 static struct node* children[max_styles];
 
 // Part 1: Visit all bags that can be transitive parents of a certain bag.
-static _Bool visited[max_styles];
+static bool visited[max_styles];
 static void visit(int root) {
   int stack[max_nodes] = {root};
   int stack_size = 1;
   while (stack_size) {
     int x = stack[--stack_size];
     for (struct node* i = parents[x]; i != NULL; i = i->next) {
-      visited[i->style] = 1;
+      visited[i->style] = true;
       if (stack_size == max_nodes) die("overflow");
       stack[stack_size++] = i->style;
     }
@@ -125,7 +125,7 @@ int main() {
     int style;
     i = read_style(i, &style);
     i = consume(i, "bags contain ");
-    while (1) {
+    while (true) {
       unsigned count;
       char* after = try_consume(i, "no other bags");
       if (after) {

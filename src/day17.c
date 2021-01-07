@@ -3,7 +3,7 @@
 #include "util/print_int.h"
 
 enum { size_x = 32, size_y = 32, size_z = 16, size_w = 16 };
-static _Bool part1_cells[2][size_z][size_y][size_x];
+static bool part1_cells[2][size_z][size_y][size_x];
 static unsigned char part2_cells[2][size_w][size_z][size_y][size_x];
 
 static void read_input() {
@@ -34,13 +34,13 @@ static void read_input() {
 
 static int part1() {
   for (int i = 0; i < 6; i++) {
-    const _Bool parity = i % 2;
-    _Bool (*input)[size_y][size_x] = part1_cells[parity];
-    _Bool (*output)[size_y][size_x] = part1_cells[1 - parity];
+    const bool parity = i % 2;
+    bool (*input)[size_y][size_x] = part1_cells[parity];
+    bool (*output)[size_y][size_x] = part1_cells[1 - parity];
     for (int z = 1; z < size_z - 1; z++) {
       for (int y = 1; y < size_y - 1; y++) {
         for (int x = 1; x < size_x - 1; x++) {
-          const _Bool populated = input[z][y][x];
+          const bool populated = input[z][y][x];
           int neighbours = -populated;
           for (int dz = -1; dz <= 1; dz++) {
             for (int dy = -1; dy <= 1; dy++) {
@@ -71,7 +71,7 @@ static int part1() {
 
 static int part2() {
   for (int i = 0; i < 6; i++) {
-    const _Bool parity = i % 2;
+    const bool parity = i % 2;
     unsigned char (*input)[size_z][size_y][size_x] = part2_cells[parity];
     unsigned char (*output)[size_z][size_y][size_x] = part2_cells[1 - parity];
     // Accumulate the neighbours for each cell. Instead of doing it one cell at
@@ -104,7 +104,7 @@ static int part2() {
       for (int z = size_z / 2; z < size_z - 1; z++) {
         for (int y = 1; y < size_y - 1; y++) {
           for (int x = 1; x < size_x - 1; x++) {
-            const _Bool populated = input[w][z][y][x];
+            const bool populated = input[w][z][y][x];
             const unsigned char neighbours = output[w][z][y][x];
             if (populated) {
               output[w][z][y][x] = neighbours == 2 || neighbours == 3;

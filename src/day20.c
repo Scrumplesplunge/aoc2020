@@ -267,7 +267,7 @@ static unsigned find_sea_monsters(int size) {
     }
     for (int y = 0, y_end = 8 * size - 3; y < y_end; y++) {
       for (int x = 0, x_end = size - 2; x < x_end; x++) {
-        _Bool match = 1;
+        bool match = true;
         for (int sy = 0; sy < 3; sy++) {
           for (int sx = 0; sx < 4; sx++) {
             const unsigned char s = sea_monster[sy][sx];
@@ -311,7 +311,7 @@ static unsigned long long part2() {
     if (i & flip_diagonally) {
       for (int y = 0; y < 8 * size; y++) {
         for (int x = 0; x < 8 * size; x++) {
-          const _Bool value = (grid[x][y / 8] >> (7 - y % 8)) & 1;
+          const bool value = (grid[x][y / 8] >> (7 - y % 8)) & 1;
           transformed_grid[y][x / 8] |= value << (7 - x % 8);
         }
       }

@@ -13,7 +13,7 @@ int main() {
   unsigned turn = 0;
   unsigned last_number;
   memset(spoken, -1, sizeof(spoken));
-  while (1) {
+  while (true) {
     ++turn;
     i = read_int(i, &last_number);
     spoken[last_number] = turn;

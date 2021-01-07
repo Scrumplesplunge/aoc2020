@@ -60,7 +60,7 @@ static void read_input() {
         if (*i == '\n') break;
         if (*i != '|') die("syntax");
         i += 2;
-      } while (1);
+      } while (true);
     }
     if (*i != '\n') die("line");
     i++;

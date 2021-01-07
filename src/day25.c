@@ -14,7 +14,7 @@ static unsigned mod_mul(unsigned a, unsigned b) {
 static unsigned mod_exp(unsigned a, unsigned b) {
   unsigned result = 1;
   for (int i = 0; i < 32; i++) {
-    const _Bool bit = (b >> (31 - i)) % 2;
+    const bool bit = (b >> (31 - i)) % 2;
     result = mod_mul(result, result);
     if (bit) result = mod_mul(result, a);
   }
@@ -29,7 +29,7 @@ struct entry {
 
 static void sift_down(struct entry* values, int num_values, int i) {
   const struct entry x = values[i];
-  while (1) {
+  while (true) {
     const int l = 2 * i + 1, r = l + 1;
     if (num_values <= l) break;
     const int max_child =
@@ -63,7 +63,7 @@ static unsigned mod_log(unsigned a, unsigned b) {
   const unsigned factor = mod_exp(a, 20201227 - 1 - table_size);
   unsigned exponent = 0;
   e = b;
-  while (1) {
+  while (true) {
     // Find the value in the table.
     unsigned i = 0, j = table_size;
     while (j - i > 1) {

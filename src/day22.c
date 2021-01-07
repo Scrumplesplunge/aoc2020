@@ -104,10 +104,10 @@ static struct circular_buffer* recursive_combat(struct circular_buffer* hands);
 
 // Runs a single round of recursive combat. Returns true if the game finishes as
 // a result of this round.
-static _Bool recursive_combat_round(struct circular_buffer* hands) {
+static bool recursive_combat_round(struct circular_buffer* hands) {
   const unsigned char a = pop_front(&hands[0]);
   const unsigned char b = pop_front(&hands[1]);
-  _Bool a_wins;
+  bool a_wins;
   if (a <= hands[0].size && b <= hands[1].size) {
     // Recursive game.
     struct circular_buffer new_hands[2] = {hands[0], hands[1]};
@@ -130,26 +130,26 @@ static _Bool recursive_combat_round(struct circular_buffer* hands) {
 }
 
 // Returns true if two circular buffers have the same contents.
-static _Bool buffers_equal(
+static bool buffers_equal(
     struct circular_buffer* l, struct circular_buffer* r) {
-  if (l->size != r->size) return 0;
+  if (l->size != r->size) return false;
   int i = l->begin, j = r->begin;
   int end = i + l->size;
   if (end >= max_cards) end -= max_cards;
   while (i != end) {
-    if (l->cards[i] != r->cards[j]) return 0;
+    if (l->cards[i] != r->cards[j]) return false;
     i++;
     j++;
     if (i == max_cards) i = 0;
     if (j == max_cards) j = 0;
   }
-  return 1;
+  return true;
 }
 
 static struct circular_buffer* recursive_combat(
     struct circular_buffer* hare_hands) {
   struct circular_buffer hands[] = {hare_hands[0], hare_hands[1]};
-  while (1) {
+  while (true) {
     if (recursive_combat_round(hare_hands) ||
         recursive_combat_round(hare_hands)) {
       // The hare has finished the game.

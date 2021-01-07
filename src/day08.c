@@ -54,7 +54,7 @@ static void read_input() {
         die("bad op");
     }
     i += 4;
-    const _Bool negative = *i == '-';
+    const bool negative = *i == '-';
     i++;
     unsigned value;
     i = (char*)read_int(i, &value);
@@ -64,7 +64,7 @@ static void read_input() {
   }
 }
 
-static _Bool run(int* result) {
+static bool run(int* result) {
   for (int i = 0; i < code_size; i++) code[i].reachable = 0;
   int i = 0;
   int accumulator = 0;
@@ -72,7 +72,7 @@ static _Bool run(int* result) {
     struct operation* op = &code[i];
     if (op->reachable) {
       *result = accumulator;
-      return 0;
+      return false;
     }
     op->reachable = 1;
     switch (op->opcode) {
@@ -89,7 +89,7 @@ static _Bool run(int* result) {
     }
   }
   *result = accumulator;
-  return 1;
+  return true;
 }
 
 static int part1() {
@@ -99,7 +99,7 @@ static int part1() {
 }
 
 static int stack[max_code_size];
-static _Bool terminates(int root) {
+static bool terminates(int root) {
   if (code[root].seen) return code[root].terminates;
   stack[0] = root;
   int size = 1;
@@ -107,9 +107,9 @@ static _Bool terminates(int root) {
     const int address = stack[--size];
     struct operation* op = &code[address];
     const int offset = op->opcode == jmp ? op->argument : 1;
-    op->seen = 1;
+    op->seen = true;
     if (address + offset >= code_size) {
-      op->terminates = 1;
+      op->terminates = true;
     } else if (op[offset].seen) {
       op->terminates = op[offset].terminates;
     } else {

@@ -33,8 +33,8 @@ static int part2(void) {
     struct entry* e = &entries[i];
     int len = strlen(e->password);
     if (len < e->min || len < e->max) die("bad index");
-    const _Bool first_matches = e->password[e->min - 1] == e->c;
-    const _Bool second_matches = e->password[e->max - 1] == e->c;
+    const bool first_matches = e->password[e->min - 1] == e->c;
+    const bool second_matches = e->password[e->max - 1] == e->c;
     if (first_matches != second_matches) total++;
   }
   return total;
