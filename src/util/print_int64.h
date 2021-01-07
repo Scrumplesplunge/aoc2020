@@ -2,21 +2,18 @@
 
 // Print an integer in decimal, followed by a newline.
 static void print_int64(unsigned long long x) {
-  unsigned char buffer[24] = {[23] = '\n'};
-  // Compute the decimal format one bit at a time by doubling and carrying BCD.
-  for (int i = 60; i >= 0; i -= 4) {
-    for (int j = 0; j < 23; j++) buffer[j] *= 16;
-    unsigned char carry = (x >> i) & 0xF;
-    for (int j = 22; j >= 0; j--) {
-      unsigned char temp = buffer[j] + carry;
-      buffer[j] = temp % 10;
-      carry = temp / 10;
-    }
+  // Use native BCD support to convert the number to decimal. This will only
+  // work for numbers smaller than 2^53, which is sufficient for all puzzles.
+  unsigned char bcd[10];
+  asm("fbstp %0" : "=m"(bcd) : "t"((double)x) : "st");
+  char buffer[19];
+  for (int i = 0; i < 9; i++) {
+    const unsigned char c = bcd[8 - i];
+    buffer[2 * i] = '0' + (c >> 4);
+    buffer[2 * i + 1] = '0' + (c & 0xF);
   }
-  // Compute the most significant digit and truncate the output.
+  buffer[18] = '\n';
   int i = 0;
-  while (buffer[i] == 0) i++;
-  const int start = i < 22 ? i : 22;
-  for (int j = start; j < 23; j++) buffer[j] += '0';
-  write(STDOUT_FILENO, buffer + start, 24 - start);
+  while (i < 17 && buffer[i] == '0') i++;
+  write(STDOUT_FILENO, buffer + i, 19 - i);
 }
