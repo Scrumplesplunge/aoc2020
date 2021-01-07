@@ -1,3 +1,44 @@
+// Input: A sequence of instructions which are one of:
+//   * `mask = <value>` - Set the current mask value.
+//   * `mem[<address>] = <value>` - Assign a value to memory.
+// Each character of the mask is either '0', '1', or 'X'. 'X' is a wildcard.
+// Part 1: The mask is applied to each value before it is written to memory.
+// Wildcard bits remain unchanged, but other bits are forced to match the mask.
+// Find the sum of all values left in memory at the end of the program.
+// Part 2: The mask is applied to memory addresses before assigning a value. For
+// each bit, the following transformation is applied:
+//   * If the mask value is 0, the corresponding address bit is unchanged.
+//   * If the mask value is 1, the corresponding address bit is set to 1.
+//   * If the mask value is X, the corresponding address bit is both 0 *and* 1.
+// An assignment updates all addresses represented by the post-mask value. Find
+// the sum of all values left in memory at the end of the program.
+//
+// Approach: we can parse the program into an array of instructions that is
+// suitable for both parts of the question. To parse the mask, we will use two
+// separate bitmasks: a "set" mask (which is 1 for each 1 in the mask), and
+// a "clear" mask (which is 1 for each 0 in the mask).
+//
+// For part 1, we can apply the mask with some bitwise operations:
+//   x' = (x | set_mask) & ~clear_mask;
+//
+// For part 2, we need to iterate over many addresses represented by the masking
+// set. There's a nifty trick we can use to iterate over exactly the right
+// addresses:
+//   // Constant with 1 for each X in the mask.
+//   floating_mask = 0xFFFFFFFFFULL & ~set_mask & ~clear_mask;
+//   // Iterate this until it gets back to 0.
+//   floating := (floating + 1 + ~floating_mask) & floating_mask;
+// This works by setting all non-floating digits to 1, causing any increment to
+// carry into the next floating digit and thus allowing us to act as if all the
+// Xs were a simple binary number. By iterating over values for floating and
+// XORing it with the address, we will iterate over all matching addresses.
+//
+// We can then simply run the program, applying all assignments, and calculate
+// the resulting sum. Since the addresses can be large, we use a hashtable
+// instead of an array. However, since the maximum number of Xs in a mask is
+// small, we don't assign to many addresses in total and the size remains
+// manageable.
+
 #include "util/die.h"
 #include "util/print_int64.h"
 #include "util/read_int.h"

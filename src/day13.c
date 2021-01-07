@@ -1,3 +1,27 @@
+// Input: A number representing your earliest possible departure time, and
+// a list of bus IDs that are in service with an x where a bus is not running.
+// A bus with ID x arrives at the seaport every x minutes.
+// Part 1: What is the earliest bus that you could board, multiplied by the
+// amount of time you will have to wait for that bus?
+// Part 2: The index of a bus is the position it appears in the input list. Find
+// a time t such that for all buses, the bus with index i departs at time t+i.
+//
+// Approach: part 1 is fairly straightforward. For each bus, find the soonest
+// departure after your earliest possible departure time. Pick the smallest one
+// across all buses. We can solve part 2 inductively by maintaining two
+// variables:
+//   * earliest - The earliest t which works for all buses with index < i.
+//   * period - The amount of time between consecutive instances of these buses
+//     being satisfied.
+// These values are initially i=0, earliest=0, period=1 (meaning that when no
+// buses need to be constrained, the earliest match is t=0 and every consecutive
+// minute also suffices). We then iterate over increasing values for i to update
+// the values. We can consider earliest' = earliest + k * period by brute force
+// over increasing k, and we can then update the period to be the least common
+// multiple of the bus ids seen so far (i.e. lcm(period, bus)). This converges
+// very quickly and avoids having to compute modular inverses, which is more
+// complicated.
+
 #include "util/die.h"
 #include "util/division.h"
 #include "util/print_int64.h"

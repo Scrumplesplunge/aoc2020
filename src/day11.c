@@ -1,3 +1,19 @@
+// Input: a rectangular grid of floor (.) and seats (L).
+// Part 1: Seats will change occupancy according to these rules:
+//   * An empty seat with no adjacent occupied seats will become occupied.
+//   * An occupied seat with four or more adjacent occupied seats will become
+//     empty.
+// Find the number of seats are occupied when the state stabilises.
+// Part 2: Instead of direct adjacency, consider the closest seat in each of the
+// 8 grid directions which is visible from each seat. Also, people will only
+// vacate a seat if five or more directly visible seats are occupied. Find the
+// number of seats which are occupied when the state stabilises.
+//
+// Approach: for part 1, direct simulation is simple and efficient. For part 2,
+// we can precompute the seats which are directly visible from each position so
+// that we don't have to linearly scan for them in each iteration, and then
+// check those positions directly when iterating.
+
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/print_int.h"

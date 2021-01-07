@@ -1,3 +1,22 @@
+// Input: a sequence of instructions consisting of a direction and a magnitude.
+// N, E, S, and W are compass directions, while F, L and R are forward, left,
+// and right respectively. For L and R, the magnitude is an angle in degrees
+// that is always a multiple of 90.
+// Part 1: Move the ship according to the direction and magnitudes provided and
+// find the manhattan distance of the boat from its starting point.
+// Part 2: Instructions N, E, S, W, L, and R actually affect a waypoint relative
+// to the boat, while Fn means to move the boat by n multiples of the waypoint
+// offset. After applying the newly interpreted instructions, find the manhattan
+// distance of the boat from its starting point.
+//
+// Approach: the solution is fairly straightforward. We will use a vector to
+// represent directions instead of an enum or an angle. This makes it trivial to
+// move in the right direction and generalises well to part 2. One trick we can
+// apply is to use aliasing pointers to give three names (position, direction,
+// instruction_target) to 2 variables (boat position, offset). By varying the
+// assignment of these aliases we can solve both parts of the problem with the
+// same code.
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int16.h"
