@@ -1,3 +1,20 @@
+// Input: A list of positive numbers.
+// Part 1: After the first 25 numbers, every subsequent number should be the sum
+// of two of the previous 25 numbers. Find the first number which does not have
+// this property.
+// Part 2: Find a contiguous sequence of numbers in the input which sum to the
+// answer from part 1, and return the sum of the smallest and largest numbers
+// from that sequence.
+//
+// Approach: part 1 is trivial and the naive approach is very quick. For part 2,
+// the naive approach would involve computing O(n^2) sums of O(n) values, for
+// a total of O(n^3) processing time. However, since all the values are positive
+// we can find the answer in O(n) time by computing and maintaining the sum of
+// a sliding window of values. If the sum is too small, we increase the upper
+// bound of the window. If the sum is too large, we increase the lower bound.
+// Updating the sum is O(1) in each case, and we will perform at most O(n)
+// adjustments of the window.
+
 #include "util/die.h"
 #include "util/print_int64.h"
 #include "util/read_int64.h"

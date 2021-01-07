@@ -1,3 +1,45 @@
+// Input: a small assembly code program with the following opcodes:
+//   nop x - Do nothing.
+//   acc x - Adjust the accumulator by the given amount.
+//   jmp x - Jump to a new instruction relative to this one.
+// The assembly program is guaranteed to have an infinite loop.
+// Part 1: Find the value of the accumulator immediately before the earliest
+// point when an instruction is executed for a second time.
+// Part 2: Find the sole `nop` or `jmp` instruction that can be switched to
+// `jmp` or `nop` respectively such that the program will terminate, and thus
+// find the value of the accumulator at the point when the program terminates.
+//
+// Approach: parse the program into an array of structs representing each
+// instruction. We will reserve space for tracking state about each instruction.
+//
+// For part 1, we can simply execute the program, setting `op.seen` for each
+// instruction that we execute and terminating when we see an op that has
+// already been seen.
+//
+// For part 2, we know that we can only change a single nop to a jmp, or
+// a single jmp to a nop. Firsly, it only makes sense to change an instruction
+// which is already reachable from the starting point, as other instruction
+// changes would have no effect. Secondly, if we are to change a nop to a jmp,
+// it must mean that resuming from the destination of that jmp is will
+// eventually terminate, and if we are to change a jmp to a nop, it must mean
+// that resuming from the next instruction after this one will eventually
+// terminate. Thus, if we can determine whether execution from a given point
+// will eventually terminate, then we can try each reachable nop or jmp in turn
+// and find the one which will result in termination.
+//
+// Execution starting at a given instruction will terminate if:
+//   * The instruction is a nop or acc and is the last instruction in the
+//     program.
+//   * The instruction is a jmp which jumps beyond the last instruction in the
+//     program.
+//   * Execution would terminate starting at the next instruction to execute
+//     after this one.
+//
+// We can recursively compute this for each starting position, memoizing the
+// values that we find in the process. The memoization ensures that we will
+// compute the value for a given starting position only once, so the total
+// processing time is bounded by the number of instructions in the input.
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"

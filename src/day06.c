@@ -1,3 +1,17 @@
+// Input: a list of groups, separated by blank lines. In each group, there is
+// one line per person, and the line will consist of one or more lowercase
+// letters indicating which questions that person answered yes to.
+// Part 1: For each group, find the number of questions which have a yes answer
+// from at least one person. Produce the sum of these counts across all groups.
+// Part 2: For each group, find the number of questions which have a yes answer
+// from *every* person. Produce the sum of these counts across all groups.
+//
+// Approach: this can be solved easily with bitsets again. We can use a 26-bit
+// number to express the set of questions which received a yes answer from
+// a person. For part 1, we can take the bitwise or across the group, and for
+// part 2, we can take the bitwise and. Finally, we can count up the bits that
+// are set to 1 in each group and accumulate the output.
+
 #include "util/die.h"
 #include "util/popcount.h"
 #include "util/print_int.h"

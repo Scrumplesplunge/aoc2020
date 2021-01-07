@@ -1,3 +1,24 @@
+// Input: a list of luggage rules. Each rule is of the form:
+//   <style> bag[s] contain [<count> <style> bag[s], ... | no other bags].
+// Part 1: How many styles of bag can recursively contain a shiny gold bag?
+// Part 2: How many bags must be contained inside a shiny gold bag?
+//
+// Approach: we will use string interning to transform style names into
+// small consecutive integers that can be used as array indices. Using this as
+// a building block, we will parse all rules into two arrays of linked lists.
+// parents[style] and children[style] are the lists of styles that can be
+// a direct parent or child of the given style of bag, respectively.
+//
+// To solve part 1, we will perform a depth-first search of all parents of shiny
+// gold bags. To avoid duplicate work, we have a bitset of styles that have been
+// seen.
+//
+// To solve part 2, we perform a depth-first search of children and compute the
+// total transitive number of children that a given style of bag must have.
+// Again, to avoid duplicate work, we have a bitset to tell us which bags have
+// already been processed, and we additionally cache the count for each bag type
+// so that we can reuse it for subsequent calculations.
+
 #include "util/die.h"
 #include "util/memset.h"
 #include "util/print_int.h"
