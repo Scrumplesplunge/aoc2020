@@ -1,3 +1,14 @@
+// Input: several arithmetic expressions that must be evaluated according to
+// modified rules.
+// Part 1: Operator precedence is left-to-right, so 1 + 2 * 3 is (1 + 2) * 3.
+// Find the sum of the results of all expressions in the input.
+// Part 2: Addition binds more tightly than multiplication instead of the other
+// way around, so 1 * 2 + 3 is 1 * (2 + 3). Find the sum of the results of all
+// expressions in the input.
+//
+// Approach: this is a simple parsing problem. We will use a handwritten top
+// down parser that evaluates the expression as it goes.
+
 #include "util/die.h"
 #include "util/print_int64.h"
 #include "util/read_int64.h"

@@ -1,3 +1,17 @@
+// Input: a rectangular grid of active (#) and inactive (.) cells, representing
+// a single plane in a 3d grid.
+// Part 1: An active cube becomes inactive unless exactly 2 or 3 neighbours are
+// active. An inactive cube becomes active if exactly 3 neighbours are active.
+// How many cubes are active after 6 iterations?
+// Part 2: The space is actually 4-dimensional, meaning that every cube has 80
+// neighbours instead of 26. How many cubes are active after 6 iterations?
+//
+// Approach: the problem is not fundamentally complicated, so most of the
+// insights here are about performance. To maximise performance here we want to
+// ensure that we maximise cache locality during processing. To achieve this, we
+// will try to compute each iteration using a series of forward passes instead
+// of having lots of random access.
+
 #include "util/die.h"
 #include "util/memset.h"
 #include "util/print_int.h"

@@ -1,3 +1,53 @@
+// Input: A collection of square tiles consisting of (.) and (#). Each tile has
+// a numeric ID. The tiles should fit together, with matching edges, to form
+// a larger rectangular image. Tiles may need to be rotated or mirrored in order
+// to match.
+// Part 1: Find the four corners of the larger image and return the product of
+// their IDs.
+// Part 2: Removing the tile borders from each tile, we need to find sea
+// monsters in the image. A sea monster looks like the image below. Sea monsters
+// will only be found in one specific transformation of the grid. Within that
+// transformed grid, cells outside of the sea monster can contain any value.
+// Discarding all cells that are part of a sea monster, find the total number of
+// (#) cells in the image. A sea monster looks like this:
+//
+//                     #
+//   #    ##    ##    ###
+//    #  #  #  #  #  #
+//
+// Approach: to begin with, we will parse the tiles into a condensed format. We
+// can use a single bit per cell to make the representation smaller.
+//
+// Part 1 requires us to find corner pieces. We can skip a lot of the actual
+// work of assembling the jigsaw here: corner pieces will be the only pieces
+// which only match on 2 sides, so if we can count matching sides then we can
+// find the corner pieces without any extra work. To do this, we will build
+// a large map of tiles indexed by the edge patterns. We assume that we will
+// only find a single match for each edge, which isn't necessarily true in the
+// general case, but this assumption holds for real inputs. This array gives us
+// all edge pairs and allows us to count the number of adjacent tiles for each
+// tile and therefore identify the corners.
+//
+// For part 2, we need to solve the full jigsaw. We can start with any corner,
+// pick one of the two edge directions, and iterate along it until we hit
+// another corner. From there, we can iterate vertically to assemble the full
+// grid. The resulting image is one of the 8 possible transformations of the
+// image. From there, we need to consider all 8 transformations in order to find
+// the sea monsters.
+//
+// For actually finding sea monsters, we need to match the sea monster pattern
+// against the image. The approach we will use to do this is to transform the
+// grid into the 8 different formats that need to be considered. From there, we
+// need to mask it against the sea monster pattern at each offset and check that
+// every part is present. We can achieve this with some simple bitwise
+// operations when the sea monster is suitably aligned to the cells. However, to
+// check every location we will need to consider different offsets, so we will
+// additionally construct shifted versions of the sea monster graphic to allow
+// for efficient comparison at different offsets. By assuming that no sea
+// monsters overlap with each other, we can count up the sea monsters and
+// subtract a multiple of the sea monster size (15) from the total number of (#)
+// cells.
+
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/memset.h"

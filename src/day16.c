@@ -1,3 +1,19 @@
+// Input: A sequence of rules, followed by your ticket, followed by all nearby
+// tickets. Each rule is of the form:
+//   <field name>: <low1>-<high1> or <low2>-<high2>
+// Part 1: Compute the sum of all field values that are invalid for every rule.
+// Part 2: Identify what fields correspond to what locations in the tickets and
+// find the product of all six "departure ..." field values for your ticket.
+//
+// Approach: Part 1 is a simple linear pass. Part 2 requires matching fields to
+// indices such that all rules are satisfied for all fields. To optimize this,
+// we can first compute a table valid_pairs such that valid_pairs[i][f] is false
+// if field f cannot possibly be index i. We can do this with a single pass over
+// the tickets. Using this table to narrow down the possible candidates, we can
+// search for possible field-index mappings, backtracking when we find
+// a contradiction. Once we have a complete mapping, we can trivially extract
+// the relevant fields from our ticket and calculate the product.
+
 #include "util/die.h"
 #include "util/memset.h"
 #include "util/print_int64.h"

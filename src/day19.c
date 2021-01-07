@@ -1,3 +1,50 @@
+// Input: a collection of CFG rules, followed by a list of strings to match
+// against rule 0. Each rule is of the form:
+//   <id>: "x" - A literal character.
+//   <id>: <a> <b> - A concatenation of other rules.
+//   <id>: <a> <b> | <c> <d> - A union of concatenations of other rules.
+// Part 1: How many messages completely match rule 0?
+// Part 2: Replacing rules 8 and 11 with the ones below, how many messages
+// completely match rule 0?
+//   8: 42 | 42 8
+//   11: 42 31 | 42 11 31
+//
+// Approach: we can simplify bookkeeping by parsing the rules into an array
+// indexed by rule ID. After that, we can address both parts with the same
+// code.
+//
+// To match a concatenation rule, we need to be able to match the first
+// component against some prefix of the input and then match the second
+// component against the remaining suffix. However, for part 2 we start to have
+// multiple possible prefixes that could match and we cannot simply guess one.
+//
+// To handle it correctly, we need to consider every possible match. One option
+// would be to precompute and return all possible matches in an array so that
+// the caller could resume from each position. However, we will use a second
+// option: we will encode the "and then parse the suffix" functionality in
+// a callback function and have the matcher invoke that callback for each
+// possible match:
+//
+//   const char* match(int rule, const char* input, struct match_resume resume);
+//
+// The match function takes a rule to match, an input string to match against,
+// and a match_resume object. The match_resume object is a stateful callback:
+//
+//   struct match_resume {
+//     void* data;
+//     const char* (*func)(void*, const char*);
+//   };
+//
+// The match function will attempt to match the given rule against some prefix
+// of the input string. For each possible match, it will invoke the continuation
+// function on the remaining suffix of the input. This allows a matcher to
+// consider all possible prefixes that a rule can match and then resume parsing
+// any enclosing rule from all of those positions.
+//
+// The return value of the match function is NULL if there is no possible match,
+// or a position in the string immediately after the match in the case of
+// a success.
+
 #include "util/die.h"
 #include "util/print_int.h"
 #include "util/read_int.h"
