@@ -97,7 +97,7 @@ static bool valid_pairs[max_fields][max_fields];
 // fields, and a set of taken indices where taken[i] is true if result already
 // has a field assigned to i, returns the field index of the least ambiguous
 // field.
-static int least_ambiguous(const signed char* result, bool* taken) {
+static int least_ambiguous(const signed char* result, unsigned taken) {
   // Check for one field that is unambiguous.
   int ambiguity = num_fields + 1;
   int field = -1;
@@ -106,7 +106,7 @@ static int least_ambiguous(const signed char* result, bool* taken) {
     // Check that exactly one value index is valid.
     int num_valid = 0;
     for (int i = 0; i < num_fields; i++) {
-      if (valid_pairs[i][f] && !taken[i]) num_valid++;
+      if (valid_pairs[i][f] && !(taken & (1 << i))) num_valid++;
     }
     if (num_valid < ambiguity) {
       ambiguity = num_valid;
@@ -119,25 +119,17 @@ static int least_ambiguous(const signed char* result, bool* taken) {
 // Given a partial assignment result[0..num_fields) with -1 for unassigned
 // fields, finds an assignment for the unassigned fields such that all the
 // validity constraints in `valid_pairs` are satisfied. Returns true if
-// successful, or false if no such assignment can be found.
-static bool deduce_fields(signed char* result) {
-  bool taken[max_fields] = {0};
-  bool all_taken = true;
-  for (int f = 0; f < num_fields; f++) {
-    if (result[f] != -1) {
-      taken[result[f]] = true;
-    } else {
-      all_taken = false;
-    }
-  }
-  if (all_taken) return true;  // All fields have been assigned, we are done.
+// successful, or false if no such assignment can be found. `taken` is a bitset
+// indicating which fields have been assigned already.
+static bool deduce_fields(signed char* result, unsigned taken) {
+  if (taken == (1u << num_fields) - 1) return true;  // All assigned.
   // Find the least ambiguous field and try each possible assignment for it.
   const int f = least_ambiguous(result, taken);
   if (f == -1) return false;
   for (int i = 0; i < num_fields; i++) {
-    if (valid_pairs[i][f] && !taken[i]) {
+    if (valid_pairs[i][f] && !(taken & 1 << i)) {
       result[f] = i;
-      if (deduce_fields(result)) return true;
+      if (deduce_fields(result, taken | 1 << i)) return true;
     }
   }
   return false;
@@ -161,7 +153,7 @@ static unsigned long long part2() {
   // indices[i] is the value index for field i.
   signed char indices[max_fields];
   memset(indices, -1, sizeof(indices));
-  if (!deduce_fields(indices)) die("cannot deduce mapping");
+  if (!deduce_fields(indices, 0)) die("cannot deduce mapping");
   // Accumulate the departure fields.
   unsigned long long total = 1;
   for (int i = 0; i < num_fields; i++) {
