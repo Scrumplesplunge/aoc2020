@@ -6,11 +6,16 @@
 // Part 2: The space is actually 4-dimensional, meaning that every cube has 80
 // neighbours instead of 26. How many cubes are active after 6 iterations?
 //
-// Approach: the problem is not fundamentally complicated, so most of the
-// insights here are about performance. To maximise performance here we want to
-// ensure that we maximise cache locality during processing. To achieve this, we
-// will try to compute each iteration using a series of forward passes instead
-// of having lots of random access.
+// Approach: We will simulate the problem using a grid that is sufficiently
+// large that no edge cell will ever be active. This allows us to only update
+// inner cells and avoid having to deal with edge conditions that would slow
+// down the loops. We will also exploit some of the symmetry in the problem
+// (reflective symmetry in the z and w directions) to speed up processing.
+//
+// To maximise performance here we want to ensure that we maximise cache
+// locality during processing. To achieve this, we will try to compute each
+// iteration using a series of forward passes instead of having lots of random
+// access.
 
 #include "util/die.h"
 #include "util/memset.h"
