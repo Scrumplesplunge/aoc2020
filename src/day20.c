@@ -51,17 +51,18 @@
 #include "util/die.h"
 #include "util/memcpy.h"
 #include "util/memset.h"
+#include "util/popcount.h"
 #include "util/print_int64.h"
 #include "util/read_int16.h"
 #include "util/strncmp.h"
 
 // Composable transformations:
 // +-one-+ +-rouf+ +-eno-+ +four-+ +eerht+ +-two-+ +three+ +-owt-+
-// |     | |     e |     | e     | f     | |     e |     f t     |
-// r  0  t o  1  e t  0  r e  1  o o  0  o o  1  e o  0  o h  1  e
+// |     | |     e |     | e     | f     | |     t |     f t     |
+// r  0  t o  1  e t  0  r e  1  o o  0  o e  1  h o  0  o h  1  e
 // u  0  w n  0  r w  1  u r  1  n u  0  w n  0  r w  1  u r  1  n
-// o  0  o e  0  h o  0  o h  0  e r  1  t e  1  h t  1  r e  1  o
-// f     | |     t |     f t     | |     | |     t |     | e     |
+// o  0  o e  0  h o  0  o h  0  e r  1  t o  1  e t  1  r e  1  o
+// f     | |     t |     f t     | |     | |     e |     | e     |
 // +eerht+ +-two-+ +three+ +-owt-+ +-one-+ +-rouf+ +-eno-+ +four-+
 enum transformation {
   flip_diagonally = 1,  // Flip diagonally
@@ -87,10 +88,10 @@ static int num_tiles;
 
 // Reverse the bits in an unsigned short.
 static unsigned short reverse(unsigned short x) {
-  x = (x & 0xFF00) >> 8 | (x & 0x00FF) << 8;
-  x = (x & 0xF0F0) >> 4 | (x & 0x0F0F) << 4;
-  x = (x & 0xCCCC) >> 2 | (x & 0x3333) << 2;
-  x = (x & 0xAAAA) >> 1 | (x & 0x5555) << 1;
+  x = ((x >> 8) & 0x00FF) | (x & 0x00FF) << 8;
+  x = ((x >> 4) & 0x0F0F) | (x & 0x0F0F) << 4;
+  x = ((x >> 2) & 0x3333) | (x & 0x3333) << 2;
+  x = ((x >> 1) & 0x5555) | (x & 0x5555) << 1;
   return x;
 }
 
@@ -278,17 +279,18 @@ static struct oriented_tile next_right(struct oriented_tile input) {
 }
 
 static struct oriented_tile next_down(struct oriented_tile input) {
-  const struct edges* e = &input.tile->edges[input.orientation];
-  const struct bucket* b = &buckets[e->bottom];
-  if (b->num_ids == 1) return (struct oriented_tile){.tile = NULL};
-  const struct tile* next =
-      get_tile(b->ids[0] == input.tile->id ? b->ids[1] : b->ids[0]);
-  unsigned char orientation = 0;
-  while (orientation < 8 && next->edges[orientation].top != e->bottom) {
-    orientation++;
-  }
-  if (orientation == 8) die("no matching orientation");
-  return (struct oriented_tile){.tile = next, .orientation = orientation};
+  // Given a tile orientation, produce the orientation that represents
+  // a diagonal flip of the original orientation.
+  // VHD     VHD
+  // 000 <-> 001
+  // 100 <-> 011
+  // 010 <-> 101
+  // 110 <-> 111
+  const unsigned char flip[8] = {1, 0, 5, 4, 3, 2, 7, 6};
+  input.orientation = flip[input.orientation];
+  struct oriented_tile result = next_right(input);
+  result.orientation = flip[result.orientation];
+  return result;
 }
 
 enum { monster_width = 20, monster_height = 3 };
@@ -398,11 +400,7 @@ static unsigned long long part2() {
   int count = 0;
   for (int y = 0; y < 8 * grid_size; y++) {
     for (int x = 0; x < grid_size; x++) {
-      unsigned char c = grid[y][x];
-      c = (c & 0x55) + ((c >> 1) & 0x55);
-      c = (c & 0x33) + ((c >> 2) & 0x33);
-      c = (c & 0x0F) + ((c >> 4) & 0x0F);
-      count += c;
+      count += popcount(grid[y][x]);
     }
   }
   // Subtract all cells which are part of a sea monster. We are assuming
