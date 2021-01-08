@@ -128,18 +128,13 @@ struct slot {
   unsigned long long value;
   struct slot* next;
 };
-enum { max_slots = 1 << 20, slot_map_size = 1 << 16 };
+enum { max_slots = 1 << 20, slot_map_size = 1 << 18 };
 static struct slot slots[max_slots];
 static int num_slots;
 static struct slot* slot_map[slot_map_size];
 
 static unsigned bucket(unsigned long long address) {
-  unsigned bucket = 0;
-  for (unsigned long long i = -1; i; i /= slot_map_size) {
-    bucket ^= address % slot_map_size;
-    address /= slot_map_size;
-  }
-  return bucket;
+  return (address ^ (address >> 18)) % slot_map_size;
 }
 
 static struct slot* get_slot(unsigned long long address) {
