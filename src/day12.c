@@ -68,8 +68,9 @@ static void read_input() {
     i = read_int16(i + 1, &value);
     if (instruction->action == left || instruction->action == right) {
       // We'll go off the grid if the angles aren't multiples of 90, and it is
-      // easier to work with the quotient anyway.
-      if (value == 0 || value >= 360 || value % 90 != 0) die("angle");
+      // easier to work with the quotient anyway, so we'll assume that the
+      // angles are all 90, 180, or 270 and then divide them by 90.
+      // if (value == 0 || value >= 360 || value % 90 != 0) die("angle");
       value /= 90;
     }
     instruction->value = value;
