@@ -124,10 +124,10 @@ static int part1_adjacent(const struct grid* source, int x, int y) {
 struct position { unsigned char x, y; };
 static struct position visible[max_size][max_size][8];
 
+static const signed char directions[8][2] = {
+    {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1},  {1, 1}};
 static void part2_init() {
   // Update the visibility arrays.
-  const int directions[8][2] = {{-1, -1}, {0, -1}, {1, -1}, {-1, 0},
-                                {1, 0},   {-1, 1}, {0, 1},  {1, 1}};
   for (int i = 0; i < 4; i++) {
     const int dx = directions[i][0], dy = directions[i][1];
     for (int y = 1; y < grid_height; y++) {
