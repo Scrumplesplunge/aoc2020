@@ -47,23 +47,14 @@ struct style {
   struct style* next;
 };
 
-enum { max_styles = 1024, style_map_size = 256 };
+enum { max_styles = 1024 };
 static struct style styles[max_styles];
 static int num_styles;
-static struct style* style_map[style_map_size];
-
-static unsigned hash_style(const char* name) {
-  unsigned key = 0x01234567;
-  while (*name) {
-    key = (key << 2 | key >> 30) ^ (unsigned char)*name;
-    name++;
-  }
-  return key;
-}
+static struct style* style_map[256];
 
 // Return the unique ID for a given style name.
 static int intern_style(const char* name) {
-  const int index = hash_style(name) % style_map_size;
+  const unsigned char index = ((unsigned)name[0]) * 17 + name[1];
   for (struct style* i = style_map[index]; i != NULL; i = i->next) {
     if (strcmp(i->name, name) == 0) return i - styles;
   }
