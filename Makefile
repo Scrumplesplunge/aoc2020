@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -pedantic -nostdlib -nostartfiles -static -fno-pic \
 				 -include src/start.h
 LDFLAGS =
 
-DEBUG_CFLAGS = -g3
+DEBUG_CFLAGS = -g3 -fno-stack-protector
 DEBUG_LDFLAGS =
 
 OPT_CFLAGS = -Os -ffunction-sections -fdata-sections \
