@@ -18,7 +18,8 @@ typedef int ssize_t;
 
 // System calls. We will only use three: read, write, and exit.
 
-static ssize_t read(unsigned int fd, const void* buffer, size_t size) {
+__attribute__((access (write_only, 2)))
+static ssize_t read(unsigned int fd, void* buffer, size_t size) {
   ssize_t result;
   asm volatile("int $0x80"
                : "=a"(result)
@@ -27,6 +28,7 @@ static ssize_t read(unsigned int fd, const void* buffer, size_t size) {
   return result;
 }
 
+__attribute__((access (read_only, 2)))
 static ssize_t write(unsigned int fd, const void* buffer, size_t size) {
   ssize_t result;
   asm volatile("int $0x80"
@@ -51,3 +53,9 @@ __attribute__((noreturn)) void _start() {
   // or may not insert function prelude that adjusts the stack pointer.
   exit(main());
 }
+
+// The compiler can automatically generate calls to these functions, so we must
+// unconditionally include definitions for them.
+#include "util/memcpy.h"
+#include "util/memmove.h"
+#include "util/memset.h"

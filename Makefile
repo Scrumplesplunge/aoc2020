@@ -2,7 +2,7 @@ CC = gcc -m32
 AS = as --32
 LD = ld -m elf_i386
 CFLAGS = -Wall -Wextra -pedantic -nostdlib -nostartfiles -static -fno-pic \
-				 -include src/start.h
+				 -include src/start.h -fno-stack-protector
 LDFLAGS =
 
 DEBUG_CFLAGS = -g3 -fno-stack-protector
@@ -10,8 +10,7 @@ DEBUG_LDFLAGS =
 
 OPT_CFLAGS = -Os -ffunction-sections -fdata-sections \
 						 -fno-unwind-tables -fno-asynchronous-unwind-tables \
-						 -fomit-frame-pointer -fno-stack-protector \
-						 -mpreferred-stack-boundary=2 -DNDEBUG
+						 -fomit-frame-pointer -mpreferred-stack-boundary=2
 OPT_LDFLAGS = --gc-sections -s
 
 .PHONY: default all opt debug clean debug_tests opt_tests

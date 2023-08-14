@@ -34,6 +34,7 @@
 
 #include "util/die.h"
 #include "util/memcpy.h"
+#include "util/memmove.h"
 #include "util/print_int.h"
 #include "util/read_int8.h"
 #include "util/strncmp.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 // Copy n bytes from src to dest. The src and dest regions may overlap.
-static void* memmove(void* dest, const void* src, size_t n) {
+void* memmove(void* dest, const void* src, size_t n) {
   if (dest < src) {
     char* o = dest;
     char* const end = o + n;
@@ -11,7 +11,7 @@ static void* memmove(void* dest, const void* src, size_t n) {
   } else {
     char* const end = dest;
     char* o = end + n;
-    const char* i = src + n;
+    const char* i = (const char*)src + n;
     do {
       *--o = *--i;
     } while (o != end);

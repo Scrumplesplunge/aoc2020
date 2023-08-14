@@ -26,6 +26,7 @@
 
 #include "util/die.h"
 #include "util/memcpy.h"
+#include "util/memmove.h"
 #include "util/memset.h"
 #include "util/popcount.h"
 #include "util/print_int.h"
